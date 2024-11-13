@@ -1,22 +1,21 @@
 # ninja log v5
+59	434	7531224271716650	Forward_declaration/CMakeFiles/forward_declaration.dir/main.cpp.obj	7fa6f32b93bd0487
 16	1466	7531220688048116	SFML_examples/test_SFML/CMakeFiles/SFML_Test.dir/Car.cpp.obj	9091135e6f21650
 9	1490	7531220688361155	SFML_examples/test_SFML/CMakeFiles/SFML_Test.dir/main.cpp.obj	c8822a8e4f2e5d10
-1490	2958	7531220702702305	SFML_examples/test_SFML/SFML_Test.exe	b88a3dd3e35e98da
 48	1282	7531222904854506	SFML_examples/test_SFML1/CMakeFiles/SFML_Test1.dir/Follower.cpp.obj	8cd7ea48a4d9a364
-55	1284	7531222905014597	SFML_examples/test_SFML1/CMakeFiles/SFML_Test1.dir/Leader.cpp.obj	4ce291c88822484e
+1490	2958	7531220702702305	SFML_examples/test_SFML/SFML_Test.exe	b88a3dd3e35e98da
 40	1298	7531222905171067	SFML_examples/test_SFML1/CMakeFiles/SFML_Test1.dir/main.cpp.obj	e03a13c033e895e2
-1299	2259	7531222914510622	SFML_examples/test_SFML1/SFML_Test1.exe	5833e1f654327452
+55	1284	7531222905014597	SFML_examples/test_SFML1/CMakeFiles/SFML_Test1.dir/Leader.cpp.obj	4ce291c88822484e
 23	757	7531223235294027	SFML_examples/test_SFML2/CMakeFiles/SFML_Test2.dir/main.cpp.obj	134a30462f98f653
+1299	2259	7531222914510622	SFML_examples/test_SFML1/SFML_Test1.exe	5833e1f654327452
 758	1717	7531223244456111	SFML_examples/test_SFML2/SFML_Test2.exe	d3cc6668a26859cb
 44	1410	7531224066747400	SFML_examples/test_SFML3/CMakeFiles/SFML_Test3.dir/Plane.cpp.obj	2a241299f134b8e1
 35	1603	7531224068621829	SFML_examples/test_SFML3/CMakeFiles/SFML_Test3.dir/main.cpp.obj	bbbacd6eb54e0a9e
 1604	2442	7531224076772872	SFML_examples/test_SFML3/SFML_Test3.exe	b99885489044013f
-59	434	7531224271716650	Forward_declaration/CMakeFiles/forward_declaration.dir/main.cpp.obj	7fa6f32b93bd0487
 48	905	7531224276463091	Test_Plane/CMakeFiles/test_plane.dir/plane.cpp.obj	3a7953da4263f0d2
 42	988	7531224277291311	thread/CMakeFiles/thread_example.dir/some_defines.cpp.obj	aace30e02016404
 435	1134	7531224278355288	Forward_declaration/forward_declaration.exe	a33550a53c42059e
 30	1233	7531224279779616	thread/CMakeFiles/thread_example.dir/thread_example.cpp.obj	b3ac73919105421d
 906	1541	7531224282481223	Test_Plane/test_plane.exe	64301de47b503d08
 1233	1863	7531224285648816	thread/thread_example.exe	3b76309a9ee44382
-50	451	0	CMakeFiles/install.util	f1fc08ccf960dd55
 12	123	0	CMakeFiles/install.util	f1fc08ccf960dd55
