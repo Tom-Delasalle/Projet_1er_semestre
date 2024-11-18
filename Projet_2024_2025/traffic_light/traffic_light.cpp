@@ -11,7 +11,7 @@ static const sf::Color Orange(255, 165, 0); // Crée la couleur orange à partir d
 const auto time_transit = 3s; 
 const auto time_waiting = 8s;
 
-enum class Traffic_color // Enumération de couleurs stocké dans la class Traffic_ccolor
+enum class Traffic_color // Enumération de couleurs stocké dans la class Traffic_color. Cette déclaration permet d'utiliser directement le nom des couleurs 
 {
     green = 0,
     orange = 1,
@@ -117,7 +117,7 @@ void print_traffic_light(Traffic_light &traffic_light_master, Traffic_light &tra
 
 int main()
 {
-    std::stop_source stopping;
+    std::stop_source stopping; // Crée stopping de la classe stop_source. Cela permet de générer de requêtes d'arrêts 
     Traffic_light traffic_light_master{Traffic_color::red}; // Crée le feu tricolore maître est esclave et les initialise
     Traffic_light traffic_light_slave{Traffic_color::red};  // avec la couleur rouge par défaut
     std::jthread thread_traffic_light_master(run_traffic_light,
@@ -129,44 +129,45 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 800), "My window"); // Crée une fenêtre "My window" de dessin 2D SFML de 800 x 800 pixels 
 
     float l1 = 350, l2 = 430, size = 800, radius = 10;
-    sf::Vertex line1[] = {sf::Vertex(sf::Vector2f(0, l1)), sf::Vertex(sf::Vector2f(size, l1))};
+    sf::Vertex line1[] = {sf::Vertex(sf::Vector2f(0, l1)), sf::Vertex(sf::Vector2f(size, l1))}; 
+    // Crée une ligne s'appelant line1 qui commence au point (0, 350) et se termine au point (800, 350) de couleur blanc (par défaut)  
     sf::Vertex line2[] = {sf::Vertex(sf::Vector2f(0, l2)), sf::Vertex(sf::Vector2f(size, l2))};
     sf::Vertex line3[] = {sf::Vertex(sf::Vector2f(l1, 0)), sf::Vertex(sf::Vector2f(l1, size))};
     sf::Vertex line4[] = {sf::Vertex(sf::Vector2f(l2, 0)), sf::Vertex(sf::Vector2f(l2, size))};
 
-    sf::CircleShape circle1(radius);
-    circle1.setFillColor(sf::Color::Blue);
-    circle1.setOrigin(circle1.getRadius() / 2, circle1.getRadius() / 2);
-    circle1.setPosition(l2 + radius / 2, l2 + radius / 2);
+    sf::CircleShape circle1(radius); // Crée un cercle s'appelant cercle1 de rayon 10 pixels
+    circle1.setFillColor(sf::Color::Blue); // L'aire du cercle est bleu
+    circle1.setOrigin(circle1.getRadius() / 2, circle1.getRadius() / 2); // Définit l'origine du cercle
+    circle1.setPosition(l2 + radius / 2, l2 + radius / 2); // Définit la position du cercle dans la fenêtre
     sf::CircleShape circle2(radius);
     circle2.setFillColor(sf::Color::Green);
     circle2.setOrigin(circle2.getRadius() / 2, circle2.getRadius() / 2);
     circle2.setPosition(l2 + radius / 2, l1 - radius);
 
-    while (window.isOpen())
+    while (window.isOpen()) // Tant que la fenêtre est ouverte
     {
-        sf::Event event;
-        while (window.pollEvent(event))
+        sf::Event event; // Crée un event qui permet de stocker des évènements en attente
+        while (window.pollEvent(event)) // Tant qu'il y a des évènements en attente dans la file d'attente de évènements de la fenêtre
         {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) //  Si l'événement est la fermeture de la fenêtre
             {
-                stopping.request_stop();
-                window.close();
+                stopping.request_stop(); // Envoie une requête d'arrêt à tous les stop_token créés
+                window.close(); // Ferme la fenêtre
                 return 0;
             }
         }
-        window.clear(sf::Color::Black);
+        window.clear(sf::Color::Black); // Clear la fenêtre et affiche du noir
 
-        window.draw(line1, 2, sf::Lines);
+        window.draw(line1, 2, sf::Lines); // Dessine la line1
         window.draw(line2, 2, sf::Lines);
         window.draw(line3, 2, sf::Lines);
         window.draw(line4, 2, sf::Lines);
-        circle1.setFillColor(get_SFML_color(traffic_light_slave));
+        circle1.setFillColor(get_SFML_color(traffic_light_slave)); // Change la couleur de fond du cercle1
         circle2.setFillColor(get_SFML_color(traffic_light_master));
-        window.draw(circle1);
+        window.draw(circle1); // Dessine le cercle1
         window.draw(circle2);
 
-        window.display();
+        window.display(); // Affiche la fenêtre
     }
 
     return 0;
