@@ -1,7 +1,7 @@
 #include <iostream>
 #include <thread>
-#include <SFML/Windows.hpp>
-#include <SFML/Graphics.hpp>
+#include <C:/Program Files/SFML/include/SFML/Window.hpp>
+#include <C:/Program Files/SFML/include/SFML/Graphics.hpp>
 #include "carrefour.hpp"
 
 using namespace std;
