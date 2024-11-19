@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/thread
+# Install script for directory: C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/thread
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/install/x64-Debug")
+  set(CMAKE_INSTALL_PREFIX "C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/install/x64-Debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,13 +34,13 @@ endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/thread/../bin/thread_example.exe")
+   "C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/thread/../bin/thread_example.exe")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/thread/../bin" TYPE EXECUTABLE FILES "C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/thread/thread_example.exe")
+  file(INSTALL DESTINATION "C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/thread/../bin" TYPE EXECUTABLE FILES "C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/thread/thread_example.exe")
 endif()
 

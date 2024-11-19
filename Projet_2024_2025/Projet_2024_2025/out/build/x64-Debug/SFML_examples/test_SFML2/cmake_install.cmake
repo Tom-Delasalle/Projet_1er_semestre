@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/SFML_examples/test_SFML2
+# Install script for directory: C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/SFML_examples/test_SFML2
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/install/x64-Debug")
+  set(CMAKE_INSTALL_PREFIX "C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/install/x64-Debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
