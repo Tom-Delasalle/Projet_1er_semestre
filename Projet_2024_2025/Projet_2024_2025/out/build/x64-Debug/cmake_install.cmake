@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025
+# Install script for directory: C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/install/x64-Debug")
+  set(CMAKE_INSTALL_PREFIX "C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/install/x64-Debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,10 +34,10 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/thread/cmake_install.cmake")
-  include("C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/SFML_examples/cmake_install.cmake")
-  include("C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/Test_Plane/cmake_install.cmake")
-  include("C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/Forward_declaration/cmake_install.cmake")
+  include("C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/thread/cmake_install.cmake")
+  include("C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/SFML_examples/cmake_install.cmake")
+  include("C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/Test_Plane/cmake_install.cmake")
+  include("C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/Forward_declaration/cmake_install.cmake")
 
 endif()
 
@@ -49,5 +49,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/tom.delasalle/Source/Repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
