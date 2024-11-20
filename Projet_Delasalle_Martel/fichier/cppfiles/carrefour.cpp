@@ -73,16 +73,13 @@ int main() {
 
     stop_source stopping; // Crée stopping de la classe stop_source. Cela permet de générer de requêtes d'arrêts 
     Traffic_light traffic_light_master{ Traffic_color::red }; // Crée le feu tricolore maître est esclave et les initialise
-    Traffic_light traffic_light_slave{ Traffic_color::red };  // avec la couleur rouge par défaut
-    jthread thread_traffic_light_master(run_traffic_light,
-        ref(traffic_light_master), ref(traffic_light_slave), stopping.get_token());
-
-    jthread write_traffic_light(print_traffic_light,
+    Traffic_light traffic_light_slave { Traffic_color::red };  // avec la couleur rouge par défaut
+    jthread thread_traffic_light_master1(run_traffic_light,
         ref(traffic_light_master), ref(traffic_light_slave), stopping.get_token());
 
     sf::RenderWindow window(sf::VideoMode(800, 800), "My window"); // Crée une fenêtre "My window" de dessin 2D SFML de 800 x 800 pixels 
 
-    float l1 = 350, l2 = 430, l3 = 370, size = 800, radius = 10;
+    float l1 = 350, l2 = 430, l3 = 330, size = 800, radius = 10;
     sf::Vertex line1[] = { sf::Vertex(sf::Vector2f(0, l1)), sf::Vertex(sf::Vector2f(size, l1)) };
     // Crée une ligne s'appelant line1 qui commence au point (0, 350) et se termine au point (800, 350) de couleur blanc (par défaut)  
     sf::Vertex line2[] = { sf::Vertex(sf::Vector2f(0, l2)), sf::Vertex(sf::Vector2f(size, l2)) };
@@ -95,15 +92,15 @@ int main() {
     sf::CircleShape circle2(radius);
     circle2.setFillColor(sf::Color::Green);
     circle2.setOrigin(circle2.getRadius() / 2, circle2.getRadius() / 2);
-    circle2.setPosition(l2 + radius / 2, l1 - radius);
+    circle2.setPosition(l2 + radius / 2, l1 - radius * 1.5);
     sf::CircleShape circle3(radius);
     circle3.setFillColor(sf::Color::Blue);
     circle3.setOrigin(circle3.getRadius() / 2, circle3.getRadius() / 2);
-    circle3.setPosition(l3 + radius / 2, l1 + radius / 2);
+    circle3.setPosition(l3 + radius / 2, l1 - radius * 1.5);
     sf::CircleShape circle4(radius);
     circle4.setFillColor(sf::Color::Green);
     circle4.setOrigin(circle4.getRadius() / 2, circle4.getRadius() / 2);
-    circle4.setPosition(l3 + radius / 2, l2 + radius);
+    circle4.setPosition(l3 + radius / 2, l2 + radius / 2);
 
     while (window.isOpen()) // Tant que la fenêtre est ouverte
     {
