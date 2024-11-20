@@ -77,37 +77,42 @@ int main() {
     jthread thread_traffic_light_master1(run_traffic_light,
         ref(traffic_light_master), ref(traffic_light_slave), stopping.get_token());
 
-    sf::RenderWindow window(sf::VideoMode(800, 800), "My window"); // Crée une fenêtre "My window" de dessin 2D SFML de 800 x 800 pixels 
+    //sf::RenderWindow window(sf::VideoMode(800, 800), "My window"); Crée une fenêtre "My window" de dessin 2D SFML de 800 x 800 pixels 
+    sf::RenderWindow window(sf::VideoMode(877, 669), "Carrefour Vauban");
 
-    float l1 = 350, l2 = 430, l3 = 330, size = 800, radius = 10;
-    sf::Vertex line1[] = { sf::Vertex(sf::Vector2f(0, l1)), sf::Vertex(sf::Vector2f(size, l1)) };
-    // Crée une ligne s'appelant line1 qui commence au point (0, 350) et se termine au point (800, 350) de couleur blanc (par défaut)  
-    sf::Vertex line2[] = { sf::Vertex(sf::Vector2f(0, l2)), sf::Vertex(sf::Vector2f(size, l2)) };
-    sf::Vertex line3[] = { sf::Vertex(sf::Vector2f(l1, 0)), sf::Vertex(sf::Vector2f(l1, size)) };
-    sf::Vertex line4[] = { sf::Vertex(sf::Vector2f(l2, 0)), sf::Vertex(sf::Vector2f(l2, size)) };
+    sf::Texture mapTexture;
+    if (!mapTexture.loadFromFile("../../../../img/map.png")) {
+        cerr << "Error : Unable to load map.png" << endl;
+        return EXIT_FAILURE;
+    }
+    sf::Sprite mapSprite(mapTexture);
+
+    float l1 = 390, l2 = 470, size = 800, radius = 10;
+    //sf::Vertex line1[] = { sf::Vertex(sf::Vector2f(0, l1)), sf::Vertex(sf::Vector2f(size, l1)) };
+    // Crée une ligne s'appelant line1 qui commence au point (0, 350) et se termine au point (800, 350) de couleur blanc (par défaut)
     sf::CircleShape circle1(radius); // Crée un cercle s'appelant cercle1 de rayon 10 pixels
     circle1.setFillColor(sf::Color::Blue); // L'aire du cercle est bleu
     circle1.setOrigin(circle1.getRadius() / 2, circle1.getRadius() / 2); // Définit l'origine du cercle
-    circle1.setPosition(l2 + radius / 2, l2 + radius / 2); // Définit la position du cercle dans la fenêtre
+    circle1.setPosition(l2 + 30 + radius / 2, l2 - 60 + radius / 2); // Définit la position du cercle dans la fenêtre
     sf::CircleShape circle2(radius);
     circle2.setFillColor(sf::Color::Green);
     circle2.setOrigin(circle2.getRadius() / 2, circle2.getRadius() / 2);
-    circle2.setPosition(l2 + radius / 2, l1 - radius * 1.5);
+    circle2.setPosition(l2 + 40 + radius / 2, l1 - 125 - radius);
     sf::CircleShape circle3(radius);
     circle3.setFillColor(sf::Color::Blue);
     circle3.setOrigin(circle3.getRadius() / 2, circle3.getRadius() / 2);
-    circle3.setPosition(l3 + radius / 2, l1 - radius * 1.5);
+    circle3.setPosition(l2 - 120 + radius / 2, l1 - 135 - radius);
     sf::CircleShape circle4(radius);
     circle4.setFillColor(sf::Color::Green);
     circle4.setOrigin(circle4.getRadius() / 2, circle4.getRadius() / 2);
-    circle4.setPosition(l3 + radius / 2, l2 + radius / 2);
+    circle4.setPosition(l2 - 130 + radius / 2, l2 - 65 + radius / 2);
 
     while (window.isOpen()) // Tant que la fenêtre est ouverte
     {
         sf::Event event; // Crée un event qui permet de stocker des évènements en attente
         while (window.pollEvent(event)) // Tant qu'il y a des évènements en attente dans la file d'attente de évènements de la fenêtre
         {
-            if (event.type == sf::Event::Closed) //  Si l'événement est la fermeture de la fenêtre
+            if (event.type == sf::Event::Closed) // Si l'événement est la fermeture de la fenêtre
             {
                 stopping.request_stop(); // Envoie une requête d'arrêt à tous les stop_token créés
                 window.close(); // Ferme la fenêtre
@@ -115,11 +120,9 @@ int main() {
             }
         }
         window.clear(sf::Color::Black); // Clear la fenêtre et affiche du noir
+        window.draw(mapSprite);         // Dessine le sprite de fond
 
-        window.draw(line1, 2, sf::Lines); // Dessine la line1
-        window.draw(line2, 2, sf::Lines);
-        window.draw(line3, 2, sf::Lines);
-        window.draw(line4, 2, sf::Lines);
+        //window.draw(line1, 2, sf::Lines); // Dessine la line1
         circle1.setFillColor(get_SFML_color(traffic_light_slave)); // Change la couleur de fond du cercle1
         circle2.setFillColor(get_SFML_color(traffic_light_master));
         circle3.setFillColor(get_SFML_color(traffic_light_slave));
