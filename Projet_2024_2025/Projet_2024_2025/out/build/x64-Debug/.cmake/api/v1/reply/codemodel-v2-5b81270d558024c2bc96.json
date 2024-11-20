@@ -1,0 +1,333 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						7,
+						8
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.6"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "thread",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-thread-Debug-6dbc8aa8df2a90820fbc.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "thread",
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"build" : "SFML_examples",
+					"childIndexes" : 
+					[
+						3,
+						4,
+						5,
+						6
+					],
+					"jsonFile" : "directory-SFML_examples-Debug-2d6a6d1f6d72aec42e84.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.15"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "SFML_examples"
+				},
+				{
+					"build" : "SFML_examples/test_SFML",
+					"jsonFile" : "directory-SFML_examples.test_SFML-Debug-5d5e5ee4fb967e0e6946.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 3,
+					"source" : "SFML_examples/test_SFML",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "SFML_examples/test_SFML1",
+					"jsonFile" : "directory-SFML_examples.test_SFML1-Debug-9746703ab3a9e18fec99.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 4,
+					"source" : "SFML_examples/test_SFML1",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "SFML_examples/test_SFML2",
+					"jsonFile" : "directory-SFML_examples.test_SFML2-Debug-e6179a051b82599ede74.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 5,
+					"source" : "SFML_examples/test_SFML2",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "SFML_examples/test_SFML3",
+					"jsonFile" : "directory-SFML_examples.test_SFML3-Debug-120d5ad2d359cd6e2213.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 6,
+					"source" : "SFML_examples/test_SFML3",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "Test_Plane",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-Test_Plane-Debug-5219c5159c5629d600f0.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.9"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 7,
+					"source" : "Test_Plane",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "Forward_declaration",
+					"jsonFile" : "directory-Forward_declaration-Debug-aa5fca25a3f19422a26a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.6"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 8,
+					"source" : "Forward_declaration",
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2,
+						7,
+						8
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Examples_projet_2021"
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "thread_example",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						3,
+						4,
+						5,
+						6
+					],
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "SFML",
+					"parentIndex" : 0
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "SFML_Test",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "SFML_Test1",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5
+					],
+					"name" : "SFML_Test2",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						6
+					],
+					"name" : "SFML_Test3",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						7
+					],
+					"name" : "test_plane",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						8
+					],
+					"name" : "Forward_declaration",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 3,
+					"id" : "SFML_Test::@c476fcffa4abc1ad2a5d",
+					"jsonFile" : "target-SFML_Test-Debug-7b6d58da69b9d3180497.json",
+					"name" : "SFML_Test",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "SFML_Test1::@b440b4e8f0e719d6f57c",
+					"jsonFile" : "target-SFML_Test1-Debug-49bcf36776c09a223623.json",
+					"name" : "SFML_Test1",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "SFML_Test2::@9af653182b81ced54800",
+					"jsonFile" : "target-SFML_Test2-Debug-9a1030e1d26f6b9bb811.json",
+					"name" : "SFML_Test2",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "SFML_Test3::@0480db7a8b2fda884fd3",
+					"jsonFile" : "target-SFML_Test3-Debug-6f8e097654bc8bbfafd0.json",
+					"name" : "SFML_Test3",
+					"projectIndex" : 6
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "forward_declaration::@eca6008feede14e337a7",
+					"jsonFile" : "target-forward_declaration-Debug-9e0163284e0aa621b70a.json",
+					"name" : "forward_declaration",
+					"projectIndex" : 8
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "test_plane::@3b8961f05ba04f3e545d",
+					"jsonFile" : "target-test_plane-Debug-384f297f61c859cbcad9.json",
+					"name" : "test_plane",
+					"projectIndex" : 7
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "thread_example::@1994991b6c1bd8685afc",
+					"jsonFile" : "target-thread_example-Debug-acf2f538b25e21253344.json",
+					"name" : "thread_example",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025/out/build/x64-Debug",
+		"source" : "C:/Users/flavien.martel/source/repos/Projet_1er_semestre/Projet_2024_2025/Projet_2024_2025"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 5
+	}
+}
