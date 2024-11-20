@@ -1,47 +1,37 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <thread>
+#include <vector>
 
 int main() {
-
     // Crée une fenêtre SFML
-    sf::RenderWindow window(sf::VideoMode(877, 669), "Fenêtre SFML");
+    sf::RenderWindow window(sf::VideoMode(877, 669), "Animation de voitures");
 
-    // Charge la texture
-    sf::Texture texture;
-    if (!texture.loadFromFile("../../../../img/map.png")) {
+    // Charge la texture du fond
+    sf::Texture mapTexture;
+    if (!mapTexture.loadFromFile("../../../../img/map.png")) {
         std::cerr << "Erreur : Impossible de charger l'image map.png" << std::endl;
         return EXIT_FAILURE;
     }
+    sf::Sprite mapSprite(mapTexture);
 
-    // Associe la texture au sprite
-    sf::Sprite sprite(texture);
+    // Charge la texture des voitures
+    sf::Texture carTexture;
+    if (!carTexture.loadFromFile("../../../../img/voiture.png")) {
+        std::cerr << "Erreur : Impossible de charger l'image voiture.png" << std::endl;
+        return EXIT_FAILURE;
+    }
 
+    // Listes pour les voitures qui avancent et reculent
+    std::vector<sf::Sprite> carsForward;
+    std::vector<sf::Sprite> carsBackward;
 
+    // Vitesse des voitures
+    const float speed = 0.1f;
 
-    /************************************** TEST **************************************/
-    float radius = 10; // Rayon du cercle
-    float l1 = 390; // Position en x du premier cercle
-    float l2 = 470; // Position en y du premier cercle
-    sf::CircleShape circle1(radius); // Crée un cercle s'appelant cercle1 de rayon 10 pixels
-    circle1.setFillColor(sf::Color::Blue); // L'aire du cercle est bleu
-    circle1.setOrigin(circle1.getRadius() / 2, circle1.getRadius() / 2); // Définit l'origine du cercle
-    circle1.setPosition(l2 + radius / 2, l2-95 + radius / 2); // Définit la position du cercle dans la fenêtre
-    sf::CircleShape circle2(radius);
-    circle2.setFillColor(sf::Color::Green);
-    circle2.setOrigin(circle2.getRadius() / 2, circle2.getRadius() / 2);
-    circle2.setPosition(l2 + radius / 2, l1-95 - radius);
-    sf::CircleShape circle3(radius); // Crée un cercle s'appelant cercle1 de rayon 10 pixels
-    circle3.setFillColor(sf::Color::Blue); // L'aire du cercle est bleu
-    circle3.setOrigin(circle3.getRadius() / 2, circle3.getRadius() / 2); // Définit l'origine du cercle
-    circle3.setPosition(l2-90 + radius / 2, l2 - 95 + radius / 2); // Définit la position du cercle dans la fenêtre
-    sf::CircleShape circle4(radius);
-    circle4.setFillColor(sf::Color::Green);
-    circle4.setOrigin(circle4.getRadius() / 2, circle4.getRadius() / 2);
-    circle4.setPosition(l2-90 + radius / 2, l1 - 95 - radius);
-
-
-
+    // Délais d'apparition des voitures
+    sf::Clock clock;
+    const sf::Time delayBetweenCars = sf::seconds(1.0f); // Délai de 1 seconde
+    int carsCreated = 0; // Compteur des voitures créées
 
     // Boucle principale
     while (window.isOpen()) {
@@ -52,19 +42,59 @@ int main() {
             }
         }
 
+        // Ajouter une nouvelle voiture si le délai est écoulé et que le total est < 10
+        if (carsCreated < 10 && clock.getElapsedTime() > delayBetweenCars) {
+            // Ajoute une voiture allant de gauche à droite
+            sf::Sprite carForward(carTexture);
+            carForward.setScale(0.1f, 0.1f);
+            carForward.setPosition(3, 346);
+            carForward.setRotation(90); // Tourne la voiture de 90 degrés à droite
+            carsForward.push_back(carForward);
+
+            // Ajoute une voiture allant de droite à gauche
+            sf::Sprite carBackward(carTexture);
+            carBackward.setScale(0.1f, 0.1f);
+            carBackward.setPosition(871, 322);
+            carBackward.setRotation(-90); // Tourne la voiture de 90 degrés à gauche
+            carsBackward.push_back(carBackward);
+
+            carsCreated++; // Incrémente le compteur des voitures créées
+            clock.restart(); // Réinitialise le délai
+        }
+
+        // Mise à jour des positions des voitures et suppression si destination atteinte
+        for (auto it = carsForward.begin(); it != carsForward.end();) {
+            it->move(speed, 0); // Déplace vers la droite
+            if (it->getPosition().x >= 871) {
+                it = carsForward.erase(it); // Supprime la voiture arrivée à destination
+            }
+            else {
+                ++it;
+            }
+        }
+        for (auto it = carsBackward.begin(); it != carsBackward.end();) {
+            it->move(-speed, 0); // Déplace vers la gauche
+            if (it->getPosition().x <= 3) {
+                it = carsBackward.erase(it); // Supprime la voiture arrivée à destination
+            }
+            else {
+                ++it;
+            }
+        }
+
         // Efface la fenêtre
         window.clear(sf::Color::Black);
 
-        // Dessine le sprite
-        window.draw(sprite);
+        // Dessine le sprite de fond
+        window.draw(mapSprite);
 
-
-
-        /************************************** TEST **************************************/
-        window.draw(circle1); // Dessine le cercle1
-        window.draw(circle2); // Dessine le cercle2
-        window.draw(circle3); // Dessine le cercle3
-        window.draw(circle4); // Dessine le cercle4
+        // Dessine les voitures
+        for (const auto& car : carsForward) {
+            window.draw(car);
+        }
+        for (const auto& car : carsBackward) {
+            window.draw(car);
+        }
 
         // Affiche les changements
         window.display();
@@ -72,4 +102,3 @@ int main() {
 
     return EXIT_SUCCESS;
 }
-
