@@ -11,3 +11,10 @@ float x = center_.x + radius_ * std::cos(angle_);
 float y = center_.y + radius_ * std::sin(angle_);
 shape_.setPosition(x, y);
 shape_.setRotation(angle_ * 180 / M_PI);
+
+	* Origine de la voiture en bas au milieu du sprite
+	* Est ce que la voiture apparait en haut, en bas, a gauche, a droite ? adapter la rotation du sprite et donc l'incrémentation de x ou y
+	* la voiture avance, arrivé à un certain point du carrefour (dépendant de là où il est apparu) il doit s'arrêter si le feu est rouge ou orange, et peut reprendre son
+	chemin s'il est vert
+	* la voiture saura à l'avance si elle souhaite tourner ou non, que ce soit à gauche ou à droite
+	* Si une voiture se trouve trop prche en face d'une autre voiture, l'autre voiture devra s'arrêter

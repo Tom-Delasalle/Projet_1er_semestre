@@ -69,6 +69,10 @@ void print_traffic_light(Traffic_light& traffic_light_master, Traffic_light& tra
     }
 }
 
+// Zones d'arrêt pour les feux
+const float stopXRight = 503; // Zone d'arrêt pour les voitures venant de la droite
+const float stopXLeft = 374;  // Zone d'arrêt pour les voitures venant de la gauche
+
 int main() {
 
     stop_source stopping; // Crée stopping de la classe stop_source. Cela permet de générer de requêtes d'arrêts 
@@ -86,6 +90,13 @@ int main() {
         return EXIT_FAILURE;
     }
     sf::Sprite mapSprite(mapTexture);
+
+    // Charge la texture des voitures
+    sf::Texture carTexture;
+    if (!carTexture.loadFromFile("../../../../img/voiture.png")) {
+        cerr << "Erreur : Impossible de charger l'image voiture.png" << endl;
+        return EXIT_FAILURE;
+    }
 
     float l1 = 390, l2 = 470, size = 800, radius = 10;
     //sf::Vertex line1[] = { sf::Vertex(sf::Vector2f(0, l1)), sf::Vertex(sf::Vector2f(size, l1)) };
