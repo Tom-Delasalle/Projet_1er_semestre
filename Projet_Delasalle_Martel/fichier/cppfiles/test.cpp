@@ -2,8 +2,8 @@
 #include <thread>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include "carrefour.hpp"
 #include "tricolore.hpp"
+#include "voiture.hpp"
 
 using namespace std;
 using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, ...
@@ -72,8 +72,8 @@ void print_traffic_light(Traffic_light& traffic_light_master, Traffic_light& tra
 int main() {
 
     stop_source stopping; // Crée stopping de la classe stop_source. Cela permet de générer de requêtes d'arrêts 
-    Traffic_light traffic_light_master{ Traffic_color::red }; // Crée le feu tricolore maître et esclave et les initialise
-    Traffic_light traffic_light_slave { Traffic_color::red }; // avec la couleur rouge par défaut
+    Traffic_light traffic_light_master{ Traffic_color::red }; // Crée le feu tricolore maître est esclave et les initialise
+    Traffic_light traffic_light_slave{ Traffic_color::red };  // avec la couleur rouge par défaut
     jthread thread_traffic_light_master1(run_traffic_light,
         ref(traffic_light_master), ref(traffic_light_slave), stopping.get_token());
 
@@ -107,6 +107,9 @@ int main() {
     circle4.setOrigin(circle4.getRadius() / 2, circle4.getRadius() / 2);
     circle4.setPosition(l2 - 130 + radius / 2, l2 - 65 + radius / 2);
 
+    vector<Voiture> voitures;
+    voitures.emplace_back(400, 0, sf::Vector2f(0, 1), 2.0f, false, false, true); // Exemple de voiture
+
     while (window.isOpen()) // Tant que la fenêtre est ouverte
     {
         sf::Event event; // Crée un event qui permet de stocker des évènements en attente
@@ -132,9 +135,13 @@ int main() {
         window.draw(circle3);
         window.draw(circle4);
 
+        // Mettre à jour et dessiner les voitures
+
+        // Supprimer les voitures qui sont hors de la fenêtre
+
         window.display(); // Affiche la fenêtre
     }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 
 }
