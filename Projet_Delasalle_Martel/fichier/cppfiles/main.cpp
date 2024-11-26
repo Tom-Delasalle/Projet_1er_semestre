@@ -237,16 +237,19 @@ int main() {
         }
 
         // Mise à jour des feux
-        circle1.setFillColor(trafficLightSlave.getSfmlColor());
-        circle2.setFillColor(trafficLightMaster.getSfmlColor());
-        circle3.setFillColor(trafficLightSlave.getSfmlColor());
-        circle4.setFillColor(trafficLightMaster.getSfmlColor());
+        circle1.setFillColor(trafficLightMaster.getSfmlColor()); // Feu maître pour la droite
+        circle2.setFillColor(trafficLightSlave.getSfmlColor());  // Feu esclave pour la gauche
+        circle3.setFillColor(trafficLightSlave.getSfmlColor());  // Feu esclave pour la droite
+        circle4.setFillColor(trafficLightMaster.getSfmlColor()); // Feu maître pour la gauche
+
 
         // Affichage
         window.clear(sf::Color::Black);
         window.draw(mapSprite);
         window.draw(circle2);
         window.draw(circle3);
+        window.draw(circle1); 
+        window.draw(circle4);
         for (const auto& car : carsForward) {
             window.draw(car.sprite);
         }
