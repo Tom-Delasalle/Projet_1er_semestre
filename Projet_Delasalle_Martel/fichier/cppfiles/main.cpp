@@ -156,34 +156,37 @@ int main() {
             if (it != carsForward.begin()) {
                 auto prevIt = std::prev(it);
                 if (!prevIt->turnRight && prevIt->sprite.getPosition().x - currentX < 40) {
-                    canMove = false;
+                    canMove = false; // La voiture ne peut pas avancer si trop proche de la précédente
                 }
             }
 
-            if ((trafficLightSlave.getColor() == TrafficColor::Orange || trafficLightSlave.getColor() == TrafficColor::Red) &&
+            // Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
+            if (trafficLightSlave.getColor() != TrafficColor::Green &&
                 currentX >= stopXLeft - 10 && currentX < stopXLeft + 10) {
-                canMove = false;
+                canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
             }
 
-            // Prise de décision au point critique
+            // Prise de décision pour tourner ou continuer tout droit
             if (!it->decisionTaken && currentX >= 425 && currentX < 430 && currentY == 339) {
                 it->decisionTaken = true;
-                it->turnRight = (turnDist(gen) == 1);
+                it->turnRight = (turnDist(gen) == 1); // Décision aléatoire de tourner à droite
                 if (it->turnRight) {
-                    it->sprite.setRotation(180); // Tourne vers le bas
-                    it->sprite.setPosition(425, 359);
+                    it->sprite.setRotation(180); // Tourne à 180° pour descendre
+                    it->sprite.setPosition(425, 359); // Position du virage
                 }
             }
 
+            // La voiture peut se déplacer uniquement si elle est autorisée par le feu
             if (canMove) {
                 if (it->turnRight) {
-                    it->sprite.move(0, carSpeed); // Descend
+                    it->sprite.move(0, carSpeed); // Descend si tourne à droite
                 }
                 else {
                     it->sprite.move(carSpeed, 0); // Continue tout droit
                 }
             }
 
+            // Si la voiture quitte la fenêtre, on l'efface
             if (currentX >= 871 || currentY >= 659) {
                 it = carsForward.erase(it);
             }
@@ -191,6 +194,9 @@ int main() {
                 ++it;
             }
         }
+
+
+
 
         // Mise à jour des positions des voitures venant de la droite
         for (auto it = carsBackward.begin(); it != carsBackward.end();) {
@@ -201,33 +207,37 @@ int main() {
             if (it != carsBackward.begin()) {
                 auto prevIt = std::prev(it);
                 if (!prevIt->turnRight && currentX - prevIt->sprite.getPosition().x < 40) {
-                    canMove = false;
+                    canMove = false; // La voiture ne peut pas avancer si trop proche de la précédente
                 }
             }
 
-            if ((trafficLightMaster.getColor() == TrafficColor::Orange || trafficLightMaster.getColor() == TrafficColor::Red) &&
+            // Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
+            if (trafficLightSlave.getColor() != TrafficColor::Green &&
                 currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
-                canMove = false;
+                canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
             }
 
+            // Prise de décision pour tourner ou continuer tout droit
             if (!it->decisionTaken && currentX <= 455 && currentX > 450 && currentY == 332) {
                 it->decisionTaken = true;
-                it->turnRight = (turnDist(gen) == 1);
+                it->turnRight = (turnDist(gen) == 1); // Décision aléatoire de tourner à droite
                 if (it->turnRight) {
-                    it->sprite.setRotation(180);
-                    it->sprite.setPosition(455, 332);
+                    it->sprite.setRotation(180); // Tourne à 180° pour descendre
+                    it->sprite.setPosition(455, 332); // Position du virage
                 }
             }
 
+            // La voiture peut se déplacer uniquement si elle est autorisée par le feu
             if (canMove) {
                 if (it->turnRight) {
-                    it->sprite.move(0, -carSpeed);
+                    it->sprite.move(0, -carSpeed); // Monte si tourne à droite
                 }
                 else {
-                    it->sprite.move(-carSpeed, 0);
+                    it->sprite.move(-carSpeed, 0); // Continue tout droit
                 }
             }
 
+            // Si la voiture quitte la fenêtre, on l'efface
             if (currentX <= 3 || currentY <= 5) {
                 it = carsBackward.erase(it);
             }
@@ -235,6 +245,9 @@ int main() {
                 ++it;
             }
         }
+
+
+
 
         // Mise à jour des feux
         circle1.setFillColor(trafficLightMaster.getSfmlColor()); // Feu maître pour la droite
