@@ -91,13 +91,6 @@ int main() {
     }
     sf::Sprite mapSprite(mapTexture);
 
-    // Charge la texture des voitures
-    sf::Texture carTexture;
-    if (!carTexture.loadFromFile("../../../../img/voiture.png")) {
-        cerr << "Erreur : Impossible de charger l'image voiture.png" << endl;
-        return EXIT_FAILURE;
-    }
-
     float l1 = 390, l2 = 470, size = 800, radius = 10;
     //sf::Vertex line1[] = { sf::Vertex(sf::Vector2f(0, l1)), sf::Vertex(sf::Vector2f(size, l1)) };
     // Crée une ligne s'appelant line1 qui commence au point (0, 350) et se termine au point (800, 350) de couleur blanc (par défaut)
