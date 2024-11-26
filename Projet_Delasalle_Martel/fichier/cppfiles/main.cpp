@@ -43,6 +43,10 @@ public:
         return sf::Color::Black; // Défaut, ne devrait jamais arriver
     }
 
+    TrafficColor getColor() const {
+        return currentColor;
+    }
+
 private:
     TrafficColor currentColor;
 };
@@ -147,9 +151,9 @@ int main() {
             }
 
             // Vérifie le feu et la zone d'arrêt
-            if (trafficLightSlave.getSfmlColor() == sf::Color::Red && currentX >= stopXLeft - 10 && currentX < stopXLeft + 10) {
-                canMove = false;
-            }
+                if ((trafficLightSlave.getColor() == TrafficColor::Orange || trafficLightSlave.getColor() == TrafficColor::Red) && currentX >= stopXLeft - 10 && currentX < stopXLeft + 10) {
+                    canMove = false;
+                }
 
             // Déplace la voiture si possible
             if (canMove) {
@@ -179,7 +183,7 @@ int main() {
             }
 
             // Vérifie le feu et la zone d'arrêt
-            if (trafficLightMaster.getSfmlColor() == sf::Color::Red && currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
+            if ((trafficLightMaster.getColor() == TrafficColor::Orange || trafficLightMaster.getColor() == TrafficColor::Red) && currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
                 canMove = false;
             }
 
