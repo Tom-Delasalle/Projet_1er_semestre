@@ -1,39 +1,19 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required (VERSION 3.9)
 
-project("Carrefour")
+project("Carrefour2")
 
-# Définir les versions de C++ standard souhaitées
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+# Ajoutez une source à l'exécutable de ce projet.
+add_executable (Carrefour2 "main.cpp" "TrafficLight.hpp" "TrafficLight.cpp" "Voiture.cpp" "Voiture.hpp")
 
-# Ajouter les fichiers sources du projet
-set(SOURCES
-    main.cpp
-    TrafficLight.cpp
-    Voiture.cpp
-)
+target_link_libraries(Carrefour2 sfml-graphics sfml-window)
 
-set(HEADERS
-    TrafficLight.hpp
-    Voiture.hpp
-)
-
-# Créer l'exécutable à partir des fichiers sources
-add_executable(Carrefour ${SOURCES} ${HEADERS})
-
-# Trouver le package SFML et les bibliothèques nécessaires
+find_package (Threads)
 find_package(SFML 2.5 COMPONENTS window system graphics REQUIRED)
 
-# Lier l'exécutable avec les bibliothèques SFML
-target_link_libraries(Carrefour sfml-graphics sfml-window sfml-system)
+link_libraries (Threads::Threads)
 
-# Ajouter le support pour les threads
-find_package(Threads REQUIRED)
-target_link_libraries(Carrefour Threads::Threads)
-
-# Ajouter une condition pour CMake version > 3.12 pour C++20
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET Carrefour PROPERTY CXX_STANDARD 20)
+  set_property(TARGET Carrefour2 PROPERTY CXX_STANDARD 20)
 endif()
 
-# (Optionnel) Ajouter des cibles pour l'installation et les tests si nécessaire
+# TODO: Ajoutez des tests et installez des cibles si nécessaire.

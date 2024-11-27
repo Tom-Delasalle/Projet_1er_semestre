@@ -23,20 +23,20 @@ void Voiture::move(float speed, bool turnRightDirection) {
 }
 
 void Voiture::makeDecision(std::uniform_int_distribution<int>& turnDist, std::mt19937& gen, float x, float y) {
-    if (!decisionTaken && x >= 425 && x < 430 && y == 339) {
+    if (!decisionTaken && x >= 435 && x < 440 && y == 339) {
         decisionTaken = true;
         turnRight = (turnDist(gen) == 1);
         if (turnRight) {
             sprite.setRotation(180);
-            sprite.setPosition(425, 359);
+            sprite.setPosition(435, 359);
         }
     }
     if (!decisionTaken && x >= 455 && x < 460 && y == 332) {
         decisionTaken = true;
         turnRight = (turnDist(gen) == 1);
         if (turnRight) {
-            sprite.setRotation(180);
-            sprite.setPosition(455, 332);
+            sprite.setRotation(360);
+            sprite.setPosition(440, 302);
         }
     }
 }
