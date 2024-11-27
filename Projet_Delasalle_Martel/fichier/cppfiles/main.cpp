@@ -51,11 +51,47 @@ private:
     TrafficColor currentColor;
 };
 
-// Structure pour représenter une voiture
-struct Car {
+// Classe pour représenter une voiture
+class Voiture {
+public:
     sf::Sprite sprite;
     bool decisionTaken = false; // Si la voiture a déjà pris une décision (tourner ou continuer)
     bool turnRight = false;     // Décision : true si la voiture doit tourner à droite
+
+    Voiture(const sf::Texture& texture, float x, float y, float rotation) {
+        sprite.setTexture(texture);
+        sprite.setScale(0.1f, 0.1f);
+        sprite.setPosition(x, y);
+        sprite.setRotation(rotation);
+    }
+
+    void move(float speed, bool turnRightDirection) {
+        if (turnRightDirection) {
+            sprite.move(0, speed); // Descend si tourne à droite
+        }
+        else {
+            sprite.move(speed, 0); // Continue tout droit
+        }
+    }
+
+    void makeDecision(std::uniform_int_distribution<int>& turnDist, std::mt19937& gen, float x, float y) {
+        if (!decisionTaken && x >= 425 && x < 430 && y == 339) {
+            decisionTaken = true;
+            turnRight = (turnDist(gen) == 1); // Décision aléatoire de tourner à droite
+            if (turnRight) {
+                sprite.setRotation(180); // Tourne à 180° pour descendre
+                sprite.setPosition(425, 359); // Position du virage
+            }
+        }
+        if (!decisionTaken && x >= 455 && x < 460 && y == 332) {
+            decisionTaken = true;
+            turnRight = (turnDist(gen) == 1); // Décision aléatoire de tourner à droite
+            if (turnRight) {
+                sprite.setRotation(180); // Tourne à 180° pour descendre
+                sprite.setPosition(455, 332); // Position du virage
+            }
+        }
+    }
 };
 
 int main() {
@@ -105,7 +141,7 @@ int main() {
     const float stopXLeft = 374;  // Zone d'arrêt pour les voitures venant de la gauche
 
     // Listes des voitures
-    std::vector<Car> carsForward, carsBackward;
+    std::vector<Voiture> carsForward, carsBackward;
     const float carSpeed = 0.1f;
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -114,7 +150,8 @@ int main() {
 
     // Horloges pour l'apparition des voitures
     sf::Clock forwardClock, backwardClock;
-    int forwardDelay = delayDist(gen), backwardDelay = delayDist(gen);
+    int forwardDelay = delayDist(gen);
+    int backwardDelay = delayDist(gen);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -124,79 +161,20 @@ int main() {
             }
         }
 
-        // Apparition des voitures
-        if (forwardClock.getElapsedTime().asMilliseconds() >= forwardDelay) {
-            Car carForward;
-            carForward.sprite.setTexture(carTexture);
-            carForward.sprite.setScale(0.1f, 0.1f);
-            carForward.sprite.setPosition(3, 339);
-            carForward.sprite.setRotation(90);
-            carsForward.push_back(carForward);
-            forwardDelay = delayDist(gen);
-            forwardClock.restart();
-        }
-
-        if (backwardClock.getElapsedTime().asMilliseconds() >= backwardDelay) {
-            Car carBackward;
-            carBackward.sprite.setTexture(carTexture);
-            carBackward.sprite.setScale(0.1f, 0.1f);
-            carBackward.sprite.setPosition(871, 332);
-            carBackward.sprite.setRotation(-90);
+        if (backwardClock.getElapsedTime().asMilliseconds() >= backwardDelay) { 
+            Voiture carBackward(carTexture, 871, 332, -90);
             carsBackward.push_back(carBackward);
             backwardDelay = delayDist(gen);
             backwardClock.restart();
         }
 
-        // Mise à jour des positions des voitures venant de la gauche
-        for (auto it = carsForward.begin(); it != carsForward.end();) {
-            float currentX = it->sprite.getPosition().x;
-            float currentY = it->sprite.getPosition().y;
-            bool canMove = true;
-
-            if (it != carsForward.begin()) {
-                auto prevIt = std::prev(it);
-                if (!prevIt->turnRight && prevIt->sprite.getPosition().x - currentX < 40) {
-                    canMove = false; // La voiture ne peut pas avancer si trop proche de la précédente
-                }
-            }
-
-            // Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
-            if (trafficLightSlave.getColor() != TrafficColor::Green &&
-                currentX >= stopXLeft - 10 && currentX < stopXLeft + 10) {
-                canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
-            }
-
-            // Prise de décision pour tourner ou continuer tout droit
-            if (!it->decisionTaken && currentX >= 425 && currentX < 430 && currentY == 339) {
-                it->decisionTaken = true;
-                it->turnRight = (turnDist(gen) == 1); // Décision aléatoire de tourner à droite
-                if (it->turnRight) {
-                    it->sprite.setRotation(180); // Tourne à 180° pour descendre
-                    it->sprite.setPosition(425, 359); // Position du virage
-                }
-            }
-
-            // La voiture peut se déplacer uniquement si elle est autorisée par le feu
-            if (canMove) {
-                if (it->turnRight) {
-                    it->sprite.move(0, carSpeed); // Descend si tourne à droite
-                }
-                else {
-                    it->sprite.move(carSpeed, 0); // Continue tout droit
-                }
-            }
-
-            // Si la voiture quitte la fenêtre, on l'efface
-            if (currentX >= 871 || currentY >= 659) {
-                it = carsForward.erase(it);
-            }
-            else {
-                ++it;
-            }
+        // Apparition des voitures
+        if (forwardClock.getElapsedTime().asMilliseconds() >= forwardDelay) {
+            Voiture carForward(carTexture, 3, 339, 90);
+            carsForward.push_back(carForward);
+            forwardDelay = delayDist(gen);
+            forwardClock.restart();
         }
-
-
-
 
         // Mise à jour des positions des voitures venant de la droite
         for (auto it = carsBackward.begin(); it != carsBackward.end();) {
@@ -218,23 +196,11 @@ int main() {
             }
 
             // Prise de décision pour tourner ou continuer tout droit
-            if (!it->decisionTaken && currentX <= 455 && currentX > 450 && currentY == 332) {
-                it->decisionTaken = true;
-                it->turnRight = (turnDist(gen) == 1); // Décision aléatoire de tourner à droite
-                if (it->turnRight) {
-                    it->sprite.setRotation(180); // Tourne à 180° pour descendre
-                    it->sprite.setPosition(455, 332); // Position du virage
-                }
-            }
+            it->makeDecision(turnDist, gen, currentX, currentY);
 
             // La voiture peut se déplacer uniquement si elle est autorisée par le feu
             if (canMove) {
-                if (it->turnRight) {
-                    it->sprite.move(0, -carSpeed); // Monte si tourne à droite
-                }
-                else {
-                    it->sprite.move(-carSpeed, 0); // Continue tout droit
-                }
+                it->move(-carSpeed, it->turnRight);
             }
 
             // Si la voiture quitte la fenêtre, on l'efface
@@ -245,9 +211,41 @@ int main() {
                 ++it;
             }
         }
+        // Mise à jour des positions des voitures venant de la gauche
+        for (auto it = carsForward.begin(); it != carsForward.end();) {
+            float currentX = it->sprite.getPosition().x;
+            float currentY = it->sprite.getPosition().y;
+            bool canMove = true;
 
+            if (it != carsForward.begin()) {
+                auto prevIt = std::prev(it);
+                if (!prevIt->turnRight && prevIt->sprite.getPosition().x - currentX < 40) {
+                    canMove = false; // La voiture ne peut pas avancer si trop proche de la précédente
+                }
+            }
 
+            // Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
+            if (trafficLightSlave.getColor() != TrafficColor::Green &&
+                currentX >= stopXLeft - 10 && currentX < stopXLeft + 10) {
+                canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
+            }
 
+            // Prise de décision pour tourner ou continuer tout droit
+            it->makeDecision(turnDist, gen, currentX, currentY);
+
+            // La voiture peut se déplacer uniquement si elle est autorisée par le feu
+            if (canMove) {
+                it->move(carSpeed, it->turnRight);
+            }
+
+            // Si la voiture quitte la fenêtre, on l'efface
+            if (currentX >= 871 || currentY >= 659) {
+                it = carsForward.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
 
         // Mise à jour des feux
         circle1.setFillColor(trafficLightMaster.getSfmlColor()); // Feu maître pour la droite
@@ -255,13 +253,12 @@ int main() {
         circle3.setFillColor(trafficLightSlave.getSfmlColor());  // Feu esclave pour la droite
         circle4.setFillColor(trafficLightMaster.getSfmlColor()); // Feu maître pour la gauche
 
-
         // Affichage
         window.clear(sf::Color::Black);
         window.draw(mapSprite);
         window.draw(circle2);
         window.draw(circle3);
-        window.draw(circle1); 
+        window.draw(circle1);
         window.draw(circle4);
         for (const auto& car : carsForward) {
             window.draw(car.sprite);
