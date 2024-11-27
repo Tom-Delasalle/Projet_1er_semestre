@@ -55,14 +55,20 @@ private:
 class Voiture {
 public:
     sf::Sprite sprite;
-    bool decisionTaken = false; // Si la voiture a déjà pris une décision (tourner ou continuer)
-    bool turnRight = false;     // Décision : true si la voiture doit tourner à droite
+    bool decisionTaken = false;
+    bool turnRight = false;
 
-    Voiture(const sf::Texture& texture, float x, float y, float rotation) {
+    Voiture(const sf::Texture& texture, bool forward) {
         sprite.setTexture(texture);
         sprite.setScale(0.1f, 0.1f);
-        sprite.setPosition(x, y);
-        sprite.setRotation(rotation);
+        if (forward) {
+            sprite.setPosition(spawnXForward, spawnYForward);
+            sprite.setRotation(90);  // Rotation pour avancer vers la droite
+        }
+        else {
+            sprite.setPosition(spawnXBackward, spawnYBackward);
+            sprite.setRotation(-90); // Rotation pour avancer vers la gauche
+        }
     }
 
     void move(float speed, bool turnRightDirection) {
@@ -77,48 +83,40 @@ public:
     void makeDecision(std::uniform_int_distribution<int>& turnDist, std::mt19937& gen, float x, float y) {
         if (!decisionTaken && x >= 425 && x < 430 && y == 339) {
             decisionTaken = true;
-            turnRight = (turnDist(gen) == 1); // Décision aléatoire de tourner à droite
+            turnRight = (turnDist(gen) == 1);
             if (turnRight) {
-                sprite.setRotation(180); // Tourne à 180° pour descendre
-                sprite.setPosition(425, 359); // Position du virage
+                sprite.setRotation(180);
+                sprite.setPosition(425, 359);
             }
         }
         if (!decisionTaken && x >= 455 && x < 460 && y == 332) {
             decisionTaken = true;
-            turnRight = (turnDist(gen) == 1); // Décision aléatoire de tourner à droite
+            turnRight = (turnDist(gen) == 1);
             if (turnRight) {
-                sprite.setRotation(180); // Tourne à 180° pour descendre
-                sprite.setPosition(455, 332); // Position du virage
+                sprite.setRotation(180);
+                sprite.setPosition(455, 332);
             }
         }
     }
+
+private:
+    static constexpr float spawnXForward = 3;
+    static constexpr float spawnYForward = 339;
+    static constexpr float spawnXBackward = 871;
+    static constexpr float spawnYBackward = 332;
 };
 
 int main() {
-    // Crée une fenêtre SFML
     sf::RenderWindow window(sf::VideoMode(877, 669), "Simulation de Feux de Circulation");
-
-    // Charge la texture du fond
-    sf::Texture mapTexture;
-    if (!mapTexture.loadFromFile("../../../../img/map.png")) {
-        std::cerr << "Erreur : Impossible de charger l'image map.png" << std::endl;
+    sf::Texture mapTexture, carTexture;
+    if (!mapTexture.loadFromFile("../../../../img/map.png") || !carTexture.loadFromFile("../../../../img/voiture.png")) {
+        std::cerr << "Erreur lors du chargement des images." << std::endl;
         return EXIT_FAILURE;
     }
     sf::Sprite mapSprite(mapTexture);
 
-    // Charge la texture des voitures
-    sf::Texture carTexture;
-    if (!carTexture.loadFromFile("../../../../img/voiture.png")) {
-        std::cerr << "Erreur : Impossible de charger l'image voiture.png" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    // Feux tricolores (maître et esclave)
-    TrafficLight trafficLightMaster(TrafficColor::Red);
-    TrafficLight trafficLightSlave(TrafficColor::Green);
-
-    // Paramètres des feux de circulation
-    const auto timeWaiting = std::chrono::seconds(2); // Temps d'attente par état
+    TrafficLight trafficLightMaster(TrafficColor::Red), trafficLightSlave(TrafficColor::Green);
+    const auto timeWaiting = std::chrono::seconds(2);
     std::thread trafficLightThread([&]() {
         while (window.isOpen()) {
             std::this_thread::sleep_for(timeWaiting);
@@ -127,56 +125,41 @@ int main() {
         }
         });
 
-    // Positions des feux
-    float radius = 10; // Rayon des cercles
+    float radius = 10;
     sf::CircleShape circle1(radius), circle2(radius), circle3(radius), circle4(radius);
-
     circle1.setPosition(470 + radius / 2, 470 - 95 + radius / 2);
     circle2.setPosition(470 + radius / 2, 390 - 95 - radius);
     circle3.setPosition(470 - 90 + radius / 2, 470 - 95 + radius / 2);
     circle4.setPosition(470 - 90 + radius / 2, 390 - 95 - radius);
 
-    // Zones d'arrêt pour les feux
-    const float stopXRight = 503; // Zone d'arrêt pour les voitures venant de la droite
-    const float stopXLeft = 374;  // Zone d'arrêt pour les voitures venant de la gauche
-
-    // Listes des voitures
+    const float stopXRight = 503, stopXLeft = 374;
     std::vector<Voiture> carsForward, carsBackward;
     const float carSpeed = 0.1f;
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> delayDist(500, 1500);
-    std::uniform_int_distribution<int> turnDist(0, 1); // Aléatoire pour le virage
+    std::uniform_int_distribution<int> delayDist(500, 1500), turnDist(0, 1);
 
-    // Horloges pour l'apparition des voitures
     sf::Clock forwardClock, backwardClock;
-    int forwardDelay = delayDist(gen);
-    int backwardDelay = delayDist(gen);
+    int forwardDelay = delayDist(gen), backwardDelay = delayDist(gen);
 
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
+            if (event.type == sf::Event::Closed) window.close();
         }
 
-        if (backwardClock.getElapsedTime().asMilliseconds() >= backwardDelay) { 
-            Voiture carBackward(carTexture, 871, 332, -90);
-            carsBackward.push_back(carBackward);
+        if (backwardClock.getElapsedTime().asMilliseconds() >= backwardDelay) {
+            carsBackward.emplace_back(carTexture, false);
             backwardDelay = delayDist(gen);
             backwardClock.restart();
         }
 
-        // Apparition des voitures
         if (forwardClock.getElapsedTime().asMilliseconds() >= forwardDelay) {
-            Voiture carForward(carTexture, 3, 339, 90);
-            carsForward.push_back(carForward);
+            carsForward.emplace_back(carTexture, true);
             forwardDelay = delayDist(gen);
             forwardClock.restart();
         }
 
-        // Mise à jour des positions des voitures venant de la droite
         for (auto it = carsBackward.begin(); it != carsBackward.end();) {
             float currentX = it->sprite.getPosition().x;
             float currentY = it->sprite.getPosition().y;
@@ -211,7 +194,7 @@ int main() {
                 ++it;
             }
         }
-        // Mise à jour des positions des voitures venant de la gauche
+
         for (auto it = carsForward.begin(); it != carsForward.end();) {
             float currentX = it->sprite.getPosition().x;
             float currentY = it->sprite.getPosition().y;
@@ -247,31 +230,22 @@ int main() {
             }
         }
 
-        // Mise à jour des feux
-        circle1.setFillColor(trafficLightMaster.getSfmlColor()); // Feu maître pour la droite
-        circle2.setFillColor(trafficLightSlave.getSfmlColor());  // Feu esclave pour la gauche
-        circle3.setFillColor(trafficLightSlave.getSfmlColor());  // Feu esclave pour la droite
-        circle4.setFillColor(trafficLightMaster.getSfmlColor()); // Feu maître pour la gauche
+        circle1.setFillColor(trafficLightMaster.getSfmlColor());
+        circle2.setFillColor(trafficLightSlave.getSfmlColor());
+        circle3.setFillColor(trafficLightSlave.getSfmlColor());
+        circle4.setFillColor(trafficLightMaster.getSfmlColor());
 
-        // Affichage
         window.clear(sf::Color::Black);
         window.draw(mapSprite);
+        window.draw(circle1);
         window.draw(circle2);
         window.draw(circle3);
-        window.draw(circle1);
         window.draw(circle4);
-        for (const auto& car : carsForward) {
-            window.draw(car.sprite);
-        }
-        for (const auto& car : carsBackward) {
-            window.draw(car.sprite);
-        }
+        for (const auto& car : carsForward) window.draw(car.sprite);
+        for (const auto& car : carsBackward) window.draw(car.sprite);
         window.display();
     }
 
-    if (trafficLightThread.joinable()) {
-        trafficLightThread.join();
-    }
-
+    if (trafficLightThread.joinable()) trafficLightThread.join();
     return EXIT_SUCCESS;
 }
