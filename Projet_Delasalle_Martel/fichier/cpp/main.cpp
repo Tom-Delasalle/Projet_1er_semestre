@@ -89,7 +89,7 @@ int main() {
 
             // La voiture peut se déplacer uniquement si elle est autorisée par le feu
             if (canMove) {
-                it->move(-carSpeed, it->turnRight);
+                it->move(-carSpeed, it->turnRight, it->turnLeft);
             }
 
             // Si la voiture quitte la fenêtre, on l'efface
@@ -125,7 +125,7 @@ int main() {
 
             // La voiture peut se déplacer uniquement si elle est autorisée par le feu
             if (canMove) {
-                it->move(carSpeed, it->turnRight);
+                it->move(carSpeed, it->turnRight, it->turnLeft);  
             }
 
             // Si la voiture quitte la fenêtre, on l'efface
