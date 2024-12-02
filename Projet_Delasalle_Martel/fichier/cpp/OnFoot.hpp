@@ -2,6 +2,7 @@
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include "TrafficLight.hpp"
 
 enum class Spawn_area {
 
