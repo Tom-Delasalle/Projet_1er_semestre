@@ -71,44 +71,71 @@ void OnFoot::move() {
 void OnFoot::turn() {
 
     switch (spawn_) {
-    case Spawn_area::UP:
-        if (this->getY() == 275 && turning_ == Turning::TURN_LEFT) {
-
+    case Spawn_area::UP: // original angle : 90
+        if (this->getX() <= 500 && this->getY() >= 275 && turning_ == Turning::TURN_LEFT) {
+            angle_ -= 1.f;
+            if (angle_ < 0.f) {
+                angle_ = 0.f;
+            }
+            spriteOnFootM.setRotation(angle_);
         }
-        if (this->getY() == 275 && turning_ == Turning::TURN_RIGHT) {
-
-        }
-        break;
-    case Spawn_area::DOWN:
-        if (this->getY() == 390&& turning_ == Turning::TURN_LEFT) {
-
-        }
-        if (this->getY() == 390 && turning_ == Turning::TURN_RIGHT) {
-
-        }
-        break;
-    case Spawn_area::LEFT:
-        if (this->getX() == 382 && turning_ == Turning::TURN_LEFT) {
-
-        }
-        if (this->getX() == 382 && turning_ == Turning::TURN_RIGHT) {
-
+        if (this->getX() >= 300 && this->getY() >= 275 && turning_ == Turning::TURN_RIGHT) {
+            angle_ += 1.f;
+            if (angle_ > 180.f) {
+                angle_ = 180.f;
+            }
+            spriteOnFootM.setRotation(angle_);
         }
         break;
-    case Spawn_area::RIGHT:
-        if (this->getX() == 494 && turning_ == Turning::TURN_LEFT) {
-
+    case Spawn_area::DOWN: // original angle : 270
+        if (this->getX() >= 300 && this->getY() <= 390 && turning_ == Turning::TURN_LEFT) {
+            angle_ -= 1.f;
+            if (angle_ < 180.f) {
+                angle_ = 180.f;
+            }
+            spriteOnFootM.setRotation(angle_);
         }
-        if (this->getX() == 494 && turning_ == Turning::TURN_RIGHT) {
-
+        if (this->getX() <= 500 && this->getY() <= 390 && turning_ == Turning::TURN_RIGHT) {
+            angle_ += 1.f;
+            if (angle_ > 360.f) {
+                angle_ = 360.f;
+            }
+            spriteOnFootM.setRotation(angle_);
+        }
+        break;
+    case Spawn_area::LEFT: // original angle : 0
+        if (this->getX() >= 382 && this->getY() >= 300 && turning_ == Turning::TURN_LEFT) {
+            angle_ -= 1.f;
+            if (angle_ < -90.f) {
+                angle_ = -90.f;
+            }
+            spriteOnFootM.setRotation(angle_);
+        }
+        if (this->getX() <= 382 && this->getY() <= 500 && turning_ == Turning::TURN_RIGHT) {
+            angle_ += 1.f;
+            if (angle_ > 90.f) {
+                angle_ = 90.f;
+            }
+            spriteOnFootM.setRotation(angle_);
+        }
+        break;
+    case Spawn_area::RIGHT: // original angle : 180
+        if (this->getX() <= 494 && this->getY() <= 500 && turning_ == Turning::TURN_LEFT) {
+            angle_ -= 1.f;
+            if (angle_ < 90.f) {
+                angle_ = 90.f;
+            }
+            spriteOnFootM.setRotation(angle_);
+        }
+        if (this->getX() <= 494 && this->getY() >= 300 && turning_ == Turning::TURN_RIGHT) {
+            angle_ += 1.f;
+            if (angle_ > 270.f) {
+                angle_ = 270.f;
+            }
+            spriteOnFootM.setRotation(angle_);
         }
         break;
     }
-    switch (turning_) {
-    case Turning::NO_TURN:
-
-    }
-
 }
 
 void OnFoot::stop() {
