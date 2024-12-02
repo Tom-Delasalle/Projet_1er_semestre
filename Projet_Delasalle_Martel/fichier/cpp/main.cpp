@@ -21,7 +21,7 @@ int main() {
     sf::Sprite mapSprite(mapTexture);
 
     TrafficLight trafficLightMaster(TrafficColor::Red), trafficLightSlave(TrafficColor::Green);
-    const auto timeWaiting = std::chrono::seconds(2);
+    const auto timeWaiting = std::chrono::seconds(4);
     std::thread trafficLightThread([&]() {
         while (window.isOpen()) {
             std::this_thread::sleep_for(timeWaiting);
@@ -53,89 +53,79 @@ int main() {
             if (event.type == sf::Event::Closed) window.close();
         }
 
-        if (backwardClock.getElapsedTime().asMilliseconds() >= backwardDelay) {
-            carsBackward.emplace_back(carTexture, false);
-            backwardDelay = delayDist(gen);
-            backwardClock.restart();
-        }
+        //if (backwardClock.getElapsedTime().asMilliseconds() >= backwardDelay) {
+        //    carsBackward.emplace_back(carTexture, false);
+        //    backwardDelay = delayDist(gen);
+        //    backwardClock.restart();
+        //}
 
-        if (forwardClock.getElapsedTime().asMilliseconds() >= forwardDelay) {
-            carsForward.emplace_back(carTexture, true);
-            forwardDelay = delayDist(gen);
-            forwardClock.restart();
-        }
+        //if (forwardClock.getElapsedTime().asMilliseconds() >= forwardDelay) {
+        //    carsForward.emplace_back(carTexture, true);
+        //    forwardDelay = delayDist(gen);
+        //    forwardClock.restart();
+        //}
 
-        // Gérer les voitures en marche arrière
-        for (auto it = carsBackward.begin(); it != carsBackward.end();) {
-            float currentX = it->sprite.getPosition().x;
-            float currentY = it->sprite.getPosition().y;
-            bool canMove = true;
+        //// Gérer les voitures en marche arrière
+        //for (auto it = carsBackward.begin(); it != carsBackward.end();) {
+        //    float currentX = it->sprite.getPosition().x;
+        //    float currentY = it->sprite.getPosition().y;
+        //    bool canMove = true;
 
-            if (it != carsBackward.begin()) {
-                auto prevIt = std::prev(it);
-                if (!prevIt->turnRight && currentX - prevIt->sprite.getPosition().x < 40) {
-                    canMove = false; // La voiture ne peut pas avancer si trop proche de la précédente
-                }
-            }
 
-            // Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
-            if (trafficLightSlave.getColor() != TrafficColor::Green &&
-                currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
-                canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
-            }
 
-            // Prise de décision pour tourner ou continuer tout droit
-            it->makeDecision(turnDist, gen, currentX, currentY);
+        //    // Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
+        //    if (trafficLightSlave.getColor() != TrafficColor::Green &&
+        //        currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
+        //        canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
+        //    }
 
-            // La voiture peut se déplacer uniquement si elle est autorisée par le feu
-            if (canMove) {
-                it->move(-carSpeed, it->turnRight, it->turnLeft);
-            }
+        //    // Prise de décision pour tourner ou continuer tout droit
+        //    it->makeDecision(turnDist, gen, currentX, currentY);
 
-            // Si la voiture quitte la fenêtre, on l'efface
-            if (currentX <= 3 || currentY <= 5) {
-                it = carsBackward.erase(it);
-            }
-            else {
-                ++it;
-            }
-        }
+        //    // La voiture peut se déplacer uniquement si elle est autorisée par le feu
+        //    if (canMove) {
+        //        it->move(-carSpeed, it->turnRight, it->turnLeft);
+        //    }
 
-        // Gérer les voitures en marche avant
-        for (auto it = carsForward.begin(); it != carsForward.end();) {
-            float currentX = it->sprite.getPosition().x;
-            float currentY = it->sprite.getPosition().y;
-            bool canMove = true;
+        //    // Si la voiture quitte la fenêtre, on l'efface
+        //    if (currentX <= 3 || currentY <= 5) {
+        //        it = carsBackward.erase(it);
+        //    }
+        //    else {
+        //        ++it;
+        //    }
+        //}
 
-            if (it != carsForward.begin()) {
-                auto prevIt = std::prev(it);
-                if (!prevIt->turnRight && prevIt->sprite.getPosition().x - currentX < 40) {
-                    canMove = false; // La voiture ne peut pas avancer si trop proche de la précédente
-                }
-            }
+        //// Gérer les voitures en marche avant
+        //for (auto it = carsForward.begin(); it != carsForward.end();) {
+        //    float currentX = it->sprite.getPosition().x;
+        //    float currentY = it->sprite.getPosition().y;
+        //    bool canMove = true;
 
-            // Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
-            if (trafficLightSlave.getColor() != TrafficColor::Green &&
-                currentX >= stopXLeft - 10 && currentX < stopXLeft + 10) {
-                canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
-            }
 
-            // Prise de décision pour tourner ou continuer tout droit
-            it->makeDecision(turnDist, gen, currentX, currentY);
 
-            // La voiture peut se déplacer uniquement si elle est autorisée par le feu
-            if (canMove) {
-                it->move(carSpeed, it->turnRight, it->turnLeft);  
-            }
+        //    // Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
+        //    if (trafficLightSlave.getColor() != TrafficColor::Green &&
+        //        currentX >= stopXLeft - 10 && currentX < stopXLeft + 10) {
+        //        canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
+        //    }
 
-            // Si la voiture quitte la fenêtre, on l'efface
-            if (currentX >= 871 || currentY >= 659) {
-                it = carsForward.erase(it);
-            }
-            else {
-                ++it;
-            }
-        }
+        //    // Prise de décision pour tourner ou continuer tout droit
+        //    it->makeDecision(turnDist, gen, currentX, currentY);
+
+        //    // La voiture peut se déplacer uniquement si elle est autorisée par le feu
+        //    if (canMove) {
+        //        it->move(carSpeed, it->turnRight, it->turnLeft);  
+        //    }
+
+        //    // Si la voiture quitte la fenêtre, on l'efface
+        //    if (currentX >= 871 || currentY >= 659) {
+        //        it = carsForward.erase(it);
+        //    }
+        //    else {
+        //        ++it;
+        //    }
+        //}
 
         circle1.setFillColor(trafficLightMaster.getSfmlColor());
         circle2.setFillColor(trafficLightSlave.getSfmlColor());
@@ -148,8 +138,8 @@ int main() {
         window.draw(circle2);
         window.draw(circle3);
         window.draw(circle4);
-        for (const auto& car : carsForward) window.draw(car.sprite);
-        for (const auto& car : carsBackward) window.draw(car.sprite);
+        //for (const auto& car : carsForward) window.draw(car.sprite);
+        //for (const auto& car : carsBackward) window.draw(car.sprite);
         window.display();
     }
 
