@@ -25,6 +25,7 @@ private:
 	int posX_;
 	int posY_;
 	float speed_;
+	float angle_;
 	Spawn_area spawn_;
 	Turning turning_;
 	sf::Texture imageOnFootD;
