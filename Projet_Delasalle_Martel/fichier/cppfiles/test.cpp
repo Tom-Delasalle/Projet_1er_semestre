@@ -1,9 +1,16 @@
 #include <iostream>
 #include <thread>
+#include <vector>
+#include <random>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include "carrefour.hpp"
 #include "tricolore.hpp"
+#define INCLUDE_VOITURE
+#ifdef INCLUDE_VOITURE
 #include "voiture.hpp"
+#endif // INCLUDE_VOITURE
+
 
 using namespace std;
 using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, ...
@@ -69,16 +76,58 @@ void print_traffic_light(Traffic_light& traffic_light_master, Traffic_light& tra
     }
 }
 
-// Zones d'arrêt pour les feux
-const float stopXRight = 503; // Zone d'arrêt pour les voitures venant de la droite
-const float stopXLeft = 374;  // Zone d'arrêt pour les voitures venant de la gauche
+void moving_cars(vector<Voiture>& cars,
+    const float carSpeed,
+    Turning& turn,
+    Spawn_area& spawn,
+    random_device& rd,
+    mt19937& gen,
+    uniform_int_distribution<int>& carDelay,
+    uniform_int_distribution<int>& spawnAndTurnRand,
+    sf::Clock& carClock,
+    int forwardDelay,
+    stop_token stopToken) {
+    
+
+
+}
 
 int main() {
 
     stop_source stopping; // Crée stopping de la classe stop_source. Cela permet de générer de requêtes d'arrêts 
-    Traffic_light traffic_light_master{ Traffic_color::red }; // Crée le feu tricolore maître est esclave et les initialise
+
+    // Listes des voitures
+    vector<Voiture> cars;
+
+    const float carSpeed = 0.1f;
+    Turning turn;
+    Spawn_area spawn;
+
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> carDelay(1500, 2500);
+    uniform_int_distribution<int> spawnAndTurnRand(1, 4);
+
+    // Horloges pour l'apparition des voitures
+    sf::Clock carClock;
+    int forwardDelay = carDelay(gen);
+
+    jthread thread_moving_cars(moving_cars,
+        cars,
+        carSpeed,
+        turn,
+        spawn,
+        rd,
+        gen,
+        carDelay,
+        spawnAndTurnRand,
+        carClock,
+        forwardDelay,
+        stopping.get_token());
+
+    Traffic_light traffic_light_master{ Traffic_color::red }; // Crée le feu tricolore maître et esclave et les initialise
     Traffic_light traffic_light_slave{ Traffic_color::red };  // avec la couleur rouge par défaut
-    jthread thread_traffic_light_master1(run_traffic_light,
+    jthread thread_traffic_light_master(run_traffic_light,
         ref(traffic_light_master), ref(traffic_light_slave), stopping.get_token());
 
     //sf::RenderWindow window(sf::VideoMode(800, 800), "My window"); Crée une fenêtre "My window" de dessin 2D SFML de 800 x 800 pixels 
@@ -111,9 +160,6 @@ int main() {
     circle4.setOrigin(circle4.getRadius() / 2, circle4.getRadius() / 2);
     circle4.setPosition(l2 - 130 + radius / 2, l2 - 65 + radius / 2);
 
-    vector<Voiture> voitures;
-    voitures.emplace_back(400, 0, sf::Vector2f(0, 1), 2.0f, false, false, true); // Exemple de voiture
-
     while (window.isOpen()) // Tant que la fenêtre est ouverte
     {
         sf::Event event; // Crée un event qui permet de stocker des évènements en attente
@@ -138,10 +184,6 @@ int main() {
         window.draw(circle2);
         window.draw(circle3);
         window.draw(circle4);
-
-        // Mettre à jour et dessiner les voitures
-
-        // Supprimer les voitures qui sont hors de la fenêtre
 
         window.display(); // Affiche la fenêtre
     }
