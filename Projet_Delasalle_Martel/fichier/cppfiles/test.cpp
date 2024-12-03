@@ -6,11 +6,18 @@
 #include <SFML/Graphics.hpp>
 #include "carrefour.hpp"
 #include "tricolore.hpp"
-#define INCLUDE_VOITURE
-#ifdef INCLUDE_VOITURE
 #include "voiture.hpp"
-#endif // INCLUDE_VOITURE
 
+const float stopXLeft = 374.f;    // Zone d'arrêt pour les voitures venant de la gauche
+const float stopXRight = 503.f;   // Zone d'arrêt pour les voitures venant de la droite
+const float stopYUp = 300.f;      // Zone d'arrêt pour les voitures venant du haut
+const float stopYBottom = 500.f;  // Zone d'arrêt pour les voitures venant du haut
+const float carSpeed = 0.00005f;    // Vitesse des voitures
+
+random_device rd;
+mt19937 gen(rd());
+uniform_int_distribution<int> carDelay(1500, 2500);
+uniform_int_distribution<int> spawnAndTurnRand(1, 4);
 
 using namespace std;
 using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, ...
@@ -76,19 +83,82 @@ void print_traffic_light(Traffic_light& traffic_light_master, Traffic_light& tra
     }
 }
 
-void moving_cars(vector<Voiture>& cars,
-    const float carSpeed,
+// Thread function for moving the cars
+void moving_cars(vector<Voiture>& carsVector,
+    sf::Texture& imageVoiture,
     Turning& turn,
     Spawn_area& spawn,
-    random_device& rd,
-    mt19937& gen,
-    uniform_int_distribution<int>& carDelay,
-    uniform_int_distribution<int>& spawnAndTurnRand,
     sf::Clock& carClock,
-    int forwardDelay,
+    int spawnDelay,
     stop_token stopToken) {
     
+    while (!stopToken.stop_requested()) {
+        // Check si le temps écoulé est égal ou supérieur à la limite donné de façon aléatoire ou si le vecteur est vide et qu'il n'y a pas de demande d'arrêt
+        if (carClock.getElapsedTime().asMilliseconds() >= spawnDelay || carsVector.empty()) {
+            cout << "New car spawned ";
+            switch (spawnAndTurnRand(gen)) {
+            case 1:
+                spawn = Spawn_area::UP;
+                cout << "at the top ";
+                break;
+            case 2:
+                spawn = Spawn_area::DOWN;
+                cout << "at the bottom ";
+                break;
+            case 3:
+                spawn = Spawn_area::LEFT;
+                cout << "to the left ";
+                break;
+            default:
+                spawn = Spawn_area::RIGHT;
+                cout << "to the right ";
+            }
+            switch (spawnAndTurnRand(gen)) {
+            case 1:
+                turn = Turning::TURN_LEFT;
+                cout << "turning left\n";
+                break;
+            case 2:
+                turn = Turning::TURN_RIGHT;
+                cout << "turning right\n";
+                break;
+            default:
+                turn = Turning::NO_TURN;
+                cout << "not turning\n";
+            }
+            Voiture carSingle(carSpeed, ref(imageVoiture), spawn, turn); // Créé une nouvelle voiture
+            carsVector.push_back(carSingle); // Push dans le vecteur
+            spawnDelay = carDelay(gen); // Nouveau délai pour spawn la prochaine voiture
+            carClock.restart(); // On remet l'horloge à zéro
+        }
 
+        for (auto it = carsVector.begin(); it != carsVector.end();) {
+            float currentX = it->getX();
+            float currentY = it->getY();
+            bool canMove = true;
+
+            /* Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
+            if (trafficLightSlave.getColor() != TrafficColor::Green &&
+                currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
+                canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
+            }*/
+
+            // La voiture peut se déplacer uniquement si elle est autorisée par le feu
+            if (canMove) {
+                it->move();
+            }
+
+            // Si la voiture quitte la fenêtre, on l'efface
+            if (currentX <= 2 || currentX >= 873 || currentY <= 2 || currentY >= 661) {
+                it = carsVector.erase(it);
+                cout << "Deleted car\n";
+            }
+            else {
+                ++it;
+            }
+        }
+    }
+    
 
 }
 
@@ -97,32 +167,29 @@ int main() {
     stop_source stopping; // Crée stopping de la classe stop_source. Cela permet de générer de requêtes d'arrêts 
 
     // Listes des voitures
-    vector<Voiture> cars;
+    vector<Voiture> carsVector;
 
-    const float carSpeed = 0.1f;
     Turning turn;
     Spawn_area spawn;
 
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<int> carDelay(1500, 2500);
-    uniform_int_distribution<int> spawnAndTurnRand(1, 4);
-
     // Horloges pour l'apparition des voitures
     sf::Clock carClock;
-    int forwardDelay = carDelay(gen);
+    int spawnDelay = carDelay(gen);
 
-    jthread thread_moving_cars(moving_cars,
-        cars,
-        carSpeed,
-        turn,
-        spawn,
-        rd,
-        gen,
-        carDelay,
-        spawnAndTurnRand,
-        carClock,
-        forwardDelay,
+    // Charge l'image de la voiture
+    sf::Texture imageVoiture;
+    if (!imageVoiture.loadFromFile("../../../../img/voiture.png")) {
+        cerr << "Erreur : Impossible de charger l'image voiture.png\n";
+        return EXIT_FAILURE;
+    }
+
+    jthread jthread_moving_cars(moving_cars,
+        ref(carsVector),
+        ref(imageVoiture),
+        ref(turn),
+        ref(spawn),
+        ref(carClock),
+        spawnDelay,
         stopping.get_token());
 
     Traffic_light traffic_light_master{ Traffic_color::red }; // Crée le feu tricolore maître et esclave et les initialise
@@ -184,6 +251,11 @@ int main() {
         window.draw(circle2);
         window.draw(circle3);
         window.draw(circle4);
+
+        // Affiche toutes les voitures
+        for (const auto& car : carsVector) {
+            window.draw(car.spriteVoiture_);
+        }
 
         window.display(); // Affiche la fenêtre
     }

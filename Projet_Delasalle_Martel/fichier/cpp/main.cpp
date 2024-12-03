@@ -38,7 +38,7 @@ int main() {
     circle4.setPosition(470 - 90 + radius / 2, 390 - 95 - radius);
 
     const float stopXRight = 503, stopXLeft = 374;
-    std::vector<Voiture> carsForward, carsBackward;
+    std::vector<Voiture> carsForward, carsVector;
     const float carSpeed = 0.1f;
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -54,7 +54,7 @@ int main() {
         }
 
         //if (backwardClock.getElapsedTime().asMilliseconds() >= backwardDelay) {
-        //    carsBackward.emplace_back(carTexture, false);
+        //    carsVector.emplace_back(carTexture, false);
         //    backwardDelay = delayDist(gen);
         //    backwardClock.restart();
         //}
@@ -66,7 +66,7 @@ int main() {
         //}
 
         //// Gérer les voitures en marche arrière
-        //for (auto it = carsBackward.begin(); it != carsBackward.end();) {
+        //for (auto it = carsVector.begin(); it != carsVector.end();) {
         //    float currentX = it->sprite.getPosition().x;
         //    float currentY = it->sprite.getPosition().y;
         //    bool canMove = true;
@@ -89,7 +89,7 @@ int main() {
 
         //    // Si la voiture quitte la fenêtre, on l'efface
         //    if (currentX <= 3 || currentY <= 5) {
-        //        it = carsBackward.erase(it);
+        //        it = carsVector.erase(it);
         //    }
         //    else {
         //        ++it;
@@ -139,7 +139,7 @@ int main() {
         window.draw(circle3);
         window.draw(circle4);
         //for (const auto& car : carsForward) window.draw(car.sprite);
-        //for (const auto& car : carsBackward) window.draw(car.sprite);
+        //for (const auto& car : carsVector) window.draw(car.sprite);
         window.display();
     }
 

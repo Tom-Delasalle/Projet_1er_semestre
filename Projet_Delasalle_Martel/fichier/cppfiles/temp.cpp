@@ -133,7 +133,7 @@ int main() {
     const float stopXLeft = 374;  // Zone d'arrêt pour les voitures venant de la gauche
 
     // Listes des voitures
-    std::vector<Voiture> carsForward, carsBackward;
+    std::vector<Voiture> carsForward, carsVector;
     const float carSpeed = 0.1f;
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -162,18 +162,18 @@ int main() {
 
         if (backwardClock.getElapsedTime().asMilliseconds() >= backwardDelay) {
             Voiture carBackward(carTexture, 871, 332, -90);
-            carsBackward.push_back(carBackward);
+            carsVector.push_back(carBackward);
             backwardDelay = delayDist(gen);
             backwardClock.restart();
         }
 
         // Mise à jour des positions des voitures venant de la droite
-        for (auto it = carsBackward.begin(); it != carsBackward.end();) {
+        for (auto it = carsVector.begin(); it != carsVector.end();) {
             float currentX = it->sprite.getPosition().x;
             float currentY = it->sprite.getPosition().y;
             bool canMove = true;
 
-            if (it != carsBackward.begin()) {
+            if (it != carsVector.begin()) {
                 auto prevIt = std::prev(it);
                 if (!prevIt->turnRight && currentX - prevIt->sprite.getPosition().x < 40) {
                     canMove = false; // La voiture ne peut pas avancer si trop proche de la précédente
@@ -196,7 +196,7 @@ int main() {
 
             // Si la voiture quitte la fenêtre, on l'efface
             if (currentX <= 3 || currentY <= 5) {
-                it = carsBackward.erase(it);
+                it = carsVector.erase(it);
             }
             else {
                 ++it;
@@ -254,7 +254,7 @@ int main() {
         for (const auto& car : carsForward) {
             window.draw(car.sprite);
         }
-        for (const auto& car : carsBackward) {
+        for (const auto& car : carsVector) {
             window.draw(car.sprite);
         }
         window.display();

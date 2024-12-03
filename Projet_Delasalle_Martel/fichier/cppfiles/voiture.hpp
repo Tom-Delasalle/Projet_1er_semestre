@@ -19,22 +19,22 @@ enum class Turning {
 
 class Voiture {
 private:
-	int posX_;
-	int posY_;
+	float posX_;
+	float posY_;
 	float speed_;
 	float angle_;
 	Spawn_area spawn_;
 	Turning turning_;
+public:
 	sf::Texture imageVoiture_;
 	sf::Sprite spriteVoiture_;
-public:
 	// Constructor
-	Voiture(const float speed, const Spawn_area& spawn, const Turning& turning);
+	Voiture(const float speed, const sf::Texture& imageVoiture, const Spawn_area& spawn, const Turning& turning);
 	// Functions
-	int getX();
-	int getY();
+	float getX();
+	float getY();
 	void set_speed(const float newSpeed);
 	void move();
-	void stop();
+	//void stop();
 	void turn();
 };
