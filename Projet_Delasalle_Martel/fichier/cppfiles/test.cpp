@@ -145,6 +145,7 @@ void moving_cars(vector<Voiture>& carsVector,
 
             // La voiture peut se déplacer uniquement si elle est autorisée par le feu
             if (canMove) {
+                it->turn();
                 it->move();
             }
 
