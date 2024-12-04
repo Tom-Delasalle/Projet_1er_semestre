@@ -1,25 +1,40 @@
-#ifndef VOITURE_HPP
-#define VOITURE_HPP
+#pragma once
 
+#include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include <random>
+#include "tricolore.hpp"
 
-class Voiture {
-public:
-    sf::Sprite sprite;
-    bool decisionTaken = false;
-    bool turnRight = false;
-    bool turnLeft = false;  
-
-    Voiture(const sf::Texture& texture, bool forward);
-    void move(float speed, bool turnRightDirection, bool turnLeftDirection);
-    void makeDecision(std::uniform_int_distribution<int>& turnDist, std::mt19937& gen, float x, float y);
-
-private:
-    static constexpr float spawnXForward = 3;
-    static constexpr float spawnYForward = 339;
-    static constexpr float spawnXBackward = 871;
-    static constexpr float spawnYBackward = 332;
+enum class Spawn_area {
+	UP = 1,
+	DOWN = 2,
+	LEFT = 3,
+	RIGHT = 4
 };
 
-#endif // VOITURE_HPP
+enum class Turning {
+	TURN_LEFT = 1,
+	TURN_RIGHT = 2,
+	NO_TURN = 3
+};
+
+class Voiture {
+private:
+	float posX_;
+	float posY_;
+	float speed_;
+	float angle_;
+	Spawn_area spawn_;
+	Turning turning_;
+public:
+	sf::Texture imageVoiture_;
+	sf::Sprite spriteVoiture_;
+	// Constructor
+	Voiture(const float speed, const sf::Texture& imageVoiture, const Spawn_area& spawn, const Turning& turning);
+	// Functions
+	float getX();
+	float getY();
+	void set_speed(const float newSpeed);
+	void move();
+	//void stop();
+	void turn();
+};
