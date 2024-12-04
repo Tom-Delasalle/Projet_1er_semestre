@@ -15,7 +15,7 @@ enum class Traffic_color // Enumération de couleurs stocké dans la class Traffic
     red = 2
 };
 
-Traffic_color operator++(Traffic_color& traffic_color) // Surcharge de l'opérateur ++ pour la class Traffic_color
+static Traffic_color operator++(Traffic_color& traffic_color) // Surcharge de l'opérateur ++ pour la class Traffic_color
 {
     switch (traffic_color)
     {

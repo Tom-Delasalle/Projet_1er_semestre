@@ -6,55 +6,54 @@
 #include <cmath>
 #include "voiture.hpp"
 
-# define PI 3.14159265358979323846
+#define PI 3.14159265358979323846
 
 using namespace std;
 using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, ...
 
-Voiture::Voiture(const float speed, const Spawn_area& spawn, const Turning& turning) : spawn_(spawn), turning_(turning), speed_(speed) {
+Voiture::Voiture(const float speed, const sf::Texture& imageVoiture, const Spawn_area& spawn, const Turning& turning) 
+    : spawn_(spawn), turning_(turning), speed_(speed), imageVoiture_(ref(imageVoiture)) {
 
-    // Charge l'image de la voiture
-    if (!imageVoiture_.loadFromFile("../../../../img/voiture.png")) {
-        cerr << "Erreur : Impossible de charger l'image voiture.png\n";
-    }
     spriteVoiture_.setTexture(imageVoiture_);
+    spriteVoiture_.setScale(0.1f, 0.1f);
     
     switch (spawn) { // Change les valeurs de la position x et y et de l'angle du sprite en fonction de l'endroit où va apparaître la voiture
     case Spawn_area::UP:
-        posX_ = 455;
-        posY_ = 3;
+        posX_ = 455.f;
+        posY_ = 3.f;
         angle_ = 90.f;
         break;
     case Spawn_area::DOWN:
-        posX_ = 425;
-        posY_ = 659;
+        posX_ = 425.f;
+        posY_ = 659.f;
         angle_ = 270.f;
         break;
     case Spawn_area::LEFT:
-        posX_ = 3;
-        posY_ = 339;
+        posX_ = 3.f;
+        posY_ = 339.f;
         angle_ = 0.f;
         break;
     case Spawn_area::RIGHT:
-        posX_ = 871;
-        posY_ = 332;
+        posX_ = 871.f;
+        posY_ = 332.f;
         angle_ = 180.f;
         break;
     default:
-        posX_ = 254;
-        posY_ = 254;
+        posX_ = 254.f;
+        posY_ = 254.f;
         angle_ = 0.f;
         cerr << "Erreur : La position x y des voitures n'a pas pu se faire correctement\n";
     }
+    spriteVoiture_.setPosition(posX_, posY_);
     spriteVoiture_.setRotation(angle_);
 
 }
 
-int Voiture::getX() {
+float Voiture::getX() {
     return posX_;
 }
 
-int Voiture::getY() {
+float Voiture::getY() {
     return posY_;
 }
 
