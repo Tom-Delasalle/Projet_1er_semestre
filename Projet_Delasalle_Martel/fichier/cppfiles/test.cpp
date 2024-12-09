@@ -2,6 +2,7 @@
 #include <thread>
 #include <vector>
 #include <random>
+#include <mutex>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include "carrefour.hpp"
@@ -14,10 +15,13 @@ const float stopYUp = 300.f;      // Zone d'arrêt pour les voitures venant du ha
 const float stopYBottom = 500.f;  // Zone d'arrêt pour les voitures venant du haut
 const float carSpeed = 0.0001f;    // Vitesse des voitures
 
+// Générateur random
 random_device rd;
 mt19937 gen(rd());
 uniform_int_distribution<int> carDelay(1500, 2500);
 uniform_int_distribution<int> spawnAndTurnRand(1, 4);
+// Protéger l'accès à carsVector
+mutex carMutex; 
 
 using namespace std;
 using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, ...
@@ -94,7 +98,7 @@ void moving_cars(vector<Voiture>& carsVector,
     
     while (!stopToken.stop_requested()) {
         // Check si le temps écoulé est égal ou supérieur à la limite donné de façon aléatoire ou si le vecteur est vide et qu'il n'y a pas de demande d'arrêt
-        if ((carClock.getElapsedTime().asMilliseconds() >= spawnDelay || carsVector.empty()) && carsVector.size() <= 5) {
+        if ((carClock.getElapsedTime().asMilliseconds() >= spawnDelay || carsVector.empty()) && carsVector.size() <= 6) {
             cout << "New car spawned ";
             switch (spawnAndTurnRand(gen)) {
             case 1: spawn = Spawn_area::UP; cout << "at the top "; break;
@@ -148,6 +152,7 @@ void moving_cars(vector<Voiture>& carsVector,
             }
             it++;
         }
+        //this_thread::sleep_for(1s);
     }
     
 
@@ -244,7 +249,12 @@ int main() {
         window.draw(circle4);
 
         // Affiche toutes les voitures
+        lock_guard<mutex> lock(carMutex); // Protège l'accès à carsVector
         for (const auto& car : carsVector) {
+            if (car.spriteVoiture_.getTexture() == nullptr) {
+                cerr << "Erreur : Voiture sans texture\n";
+                continue;
+            }
             window.draw(car.spriteVoiture_);
         }
 
