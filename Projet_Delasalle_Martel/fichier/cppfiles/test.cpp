@@ -98,7 +98,7 @@ void moving_cars(vector<Voiture>& carsVector,
     
     while (!stopToken.stop_requested()) {
         // Check si le temps écoulé est égal ou supérieur à la limite donné de façon aléatoire ou si le vecteur est vide et qu'il n'y a pas de demande d'arrêt
-        if ((carClock.getElapsedTime().asMilliseconds() >= spawnDelay || carsVector.empty()) && carsVector.size() <= 6) {
+        if ((carClock.getElapsedTime().asMilliseconds() >= spawnDelay || carsVector.empty()) && carsVector.size() <= 5) {
             cout << "New car spawned ";
             switch (spawnAndTurnRand(gen)) {
             case 1: spawn = Spawn_area::UP; cout << "at the top "; break;
@@ -112,14 +112,18 @@ void moving_cars(vector<Voiture>& carsVector,
             default:  turn = Turning::NO_TURN; cout << "not turning\n";
             }
             Voiture carSingle(carSpeed, ref(imageVoiture), spawn, turn); // Créé une nouvelle voiture
-            carsVector.push_back(carSingle); // Push dans le vecteur
+            {
+                lock_guard<mutex> lock(carMutex);
+                carsVector.push_back(carSingle); // Push dans le vecteur
+            }
             spawnDelay = carDelay(gen); // Nouveau délai pour spawn la prochaine voiture
             carClock.restart(); // On remet l'horloge à zéro
         }
 
+        lock_guard<mutex> lock(carMutex);
         for (auto it = carsVector.begin(); it != carsVector.end();) {
-            float currentX = it->getX();
-            float currentY = it->getY();
+            float currentX = it->spriteVoiture_.getPosition().x;
+            float currentY = it->spriteVoiture_.getPosition().y;
             bool canMove = true;
 
             /* Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
@@ -136,7 +140,7 @@ void moving_cars(vector<Voiture>& carsVector,
 
             // Si la voiture quitte la fenêtre, on l'efface
             if (currentX <= 2 || currentX >= 873 || currentY <= 2 || currentY >= 661) {
-                cout << "Respawned a car\n";
+                cout << "Respawned a car ";
                 switch (spawnAndTurnRand(gen)) {
                 case 1: spawn = Spawn_area::UP; cout << "at the top "; break;
                 case 2: spawn = Spawn_area::DOWN;  cout << "at the bottom "; break;
@@ -152,7 +156,6 @@ void moving_cars(vector<Voiture>& carsVector,
             }
             it++;
         }
-        //this_thread::sleep_for(1s);
     }
     
 

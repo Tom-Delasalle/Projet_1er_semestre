@@ -89,6 +89,7 @@ public:
 int main() {
     // Crée une fenêtre SFML
     sf::RenderWindow window(sf::VideoMode(877, 669), "Simulation de Feux de Circulation");
+    window.setFramerateLimit(60);
 
     // Charge la texture du fond
     sf::Texture mapTexture;

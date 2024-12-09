@@ -156,7 +156,7 @@ void Voiture::turn() {
         if (this->getX() <= 523 && this->getY() <= 500 && turning_ == Turning::TURN_LEFT) {
             angle_ -= 0.0001f;
             if (angle_ < -180.f) {
-                angle_ = 90.f;
+                angle_ = -180.f;
             }
             spriteVoiture_.setRotation(angle_);
         }
