@@ -11,39 +11,71 @@
 using namespace std;
 using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, ...
 
+float switch_posX(const Spawn_area& spawn) {
+
+    float X = 0.f;
+    switch (spawn) { // Change la valeur de la position x du sprite en fonction de l'endroit où va apparaître la voiture
+    case Spawn_area::UP: X = 455.f; break;
+    case Spawn_area::DOWN: X = 425.f; break;
+    case Spawn_area::LEFT: X = 3.f; break;
+    case Spawn_area::RIGHT: X = 871.f; break;
+    default: X = 254.f; cerr << "Erreur : La creation de la voiture n'a pas pu se faire correctement\n";
+    }
+    return X;
+
+}
+
+float switch_posY(const Spawn_area& spawn) {
+
+    float Y = 0.f;
+    switch (spawn) { // Change la valeur de la position y du sprite en fonction de l'endroit où va apparaître la voiture
+    case Spawn_area::UP: Y = 3.f; break;
+    case Spawn_area::DOWN: Y = 659.f; break;
+    case Spawn_area::LEFT: Y = 339.f; break;
+    case Spawn_area::RIGHT: Y = 332.f; break;
+    default: Y = 254.f; cerr << "Erreur : La creation de la voiture n'a pas pu se faire correctement\n";
+    }
+    return Y;
+
+}
+
+float switch_angle(const Spawn_area& spawn) {
+
+    float angle = 0.f;
+    switch (spawn) { // Change la valeur de l'angle du sprite en fonction de l'endroit où va apparaître la voiture
+    case Spawn_area::UP: angle = 180.f; break;
+    case Spawn_area::DOWN: angle = 0.f; break;
+    case Spawn_area::LEFT: angle = 90.f; break;
+    case Spawn_area::RIGHT: angle = -90.f; break;
+    default: angle = 0.f; cerr << "Erreur : La creation de la voiture n'a pas pu se faire correctement\n";
+    }
+    return angle;
+
+}
+
 Voiture::Voiture(const float speed, const sf::Texture& imageVoiture, const Spawn_area& spawn, const Turning& turning) 
     : spawn_(spawn), turning_(turning), speed_(speed), imageVoiture_(ref(imageVoiture)) {
 
     spriteVoiture_.setTexture(imageVoiture);
     spriteVoiture_.setScale(0.1f, 0.1f);
     
-    switch (spawn) { // Change les valeurs de la position x et y et de l'angle du sprite en fonction de l'endroit où va apparaître la voiture
-    case Spawn_area::UP:
-        posX_ = 455.f;
-        posY_ = 3.f;
-        angle_ = 180.f;
-        break;
-    case Spawn_area::DOWN:
-        posX_ = 425.f;
-        posY_ = 659.f;
-        angle_ = 0.f;
-        break;
-    case Spawn_area::LEFT:
-        posX_ = 3.f;
-        posY_ = 339.f;
-        angle_ = 90.f;
-        break;
-    case Spawn_area::RIGHT:
-        posX_ = 871.f;
-        posY_ = 332.f;
-        angle_ = -90.f;
-        break;
-    default:
-        posX_ = 254.f;
-        posY_ = 254.f;
-        angle_ = 0.f;
-        cerr << "Erreur : La position x y des voitures n'a pas pu se faire correctement\n";
-    }
+    posX_ = switch_posX(spawn);
+    posY_ = switch_posY(spawn);
+    angle_ = switch_angle(spawn);
+    
+    spriteVoiture_.setPosition(posX_, posY_);
+    spriteVoiture_.setRotation(angle_);
+
+}
+
+void Voiture::Respawn(const Spawn_area& spawn, const Turning& turning) {
+
+    turning_ = turning;
+
+    posX_ = switch_posX(spawn);
+    posY_ = switch_posY(spawn);
+    angle_ = switch_angle(spawn);
+
     spriteVoiture_.setPosition(posX_, posY_);
     spriteVoiture_.setRotation(angle_);
 

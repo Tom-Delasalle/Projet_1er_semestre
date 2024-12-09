@@ -97,34 +97,15 @@ void moving_cars(vector<Voiture>& carsVector,
         if ((carClock.getElapsedTime().asMilliseconds() >= spawnDelay || carsVector.empty()) && carsVector.size() <= 5) {
             cout << "New car spawned ";
             switch (spawnAndTurnRand(gen)) {
-            case 1:
-                spawn = Spawn_area::UP;
-                cout << "at the top ";
-                break;
-            case 2:
-                spawn = Spawn_area::DOWN;
-                cout << "at the bottom ";
-                break;
-            case 3:
-                spawn = Spawn_area::LEFT;
-                cout << "to the left ";
-                break;
-            default:
-                spawn = Spawn_area::RIGHT;
-                cout << "to the right ";
+            case 1: spawn = Spawn_area::UP; cout << "at the top "; break;
+            case 2: spawn = Spawn_area::DOWN;  cout << "at the bottom "; break;
+            case 3: spawn = Spawn_area::LEFT; cout << "to the left "; break;
+            default: spawn = Spawn_area::RIGHT; cout << "to the right ";
             }
             switch (spawnAndTurnRand(gen)) {
-            case 1:
-                turn = Turning::TURN_LEFT;
-                cout << "turning left\n";
-                break;
-            case 2:
-                turn = Turning::TURN_RIGHT;
-                cout << "turning right\n";
-                break;
-            default:
-                turn = Turning::NO_TURN;
-                cout << "not turning\n";
+            case 1: turn = Turning::TURN_LEFT; cout << "turning left\n"; break;
+            case 2: turn = Turning::TURN_RIGHT; cout << "turning right\n"; break;
+            default:  turn = Turning::NO_TURN; cout << "not turning\n";
             }
             Voiture carSingle(carSpeed, ref(imageVoiture), spawn, turn); // Créé une nouvelle voiture
             carsVector.push_back(carSingle); // Push dans le vecteur
@@ -152,11 +133,20 @@ void moving_cars(vector<Voiture>& carsVector,
             // Si la voiture quitte la fenêtre, on l'efface
             if (currentX <= 2 || currentX >= 873 || currentY <= 2 || currentY >= 661) {
                 cout << "Respawned a car\n";
-                it->
+                switch (spawnAndTurnRand(gen)) {
+                case 1: spawn = Spawn_area::UP; cout << "at the top "; break;
+                case 2: spawn = Spawn_area::DOWN;  cout << "at the bottom "; break;
+                case 3: spawn = Spawn_area::LEFT; cout << "to the left "; break;
+                default: spawn = Spawn_area::RIGHT; cout << "to the right ";
+                }
+                switch (spawnAndTurnRand(gen)) {
+                case 1: turn = Turning::TURN_LEFT; cout << "turning left\n"; break;
+                case 2: turn = Turning::TURN_RIGHT; cout << "turning right\n"; break;
+                default:  turn = Turning::NO_TURN; cout << "not turning\n";
+                }
+                it->Respawn(spawn, turn);
             }
-            else {
-                ++it;
-            }
+            it++;
         }
     }
     
