@@ -12,7 +12,7 @@ const float stopXLeft = 374.f;    // Zone d'arrêt pour les voitures venant de la
 const float stopXRight = 503.f;   // Zone d'arrêt pour les voitures venant de la droite
 const float stopYUp = 300.f;      // Zone d'arrêt pour les voitures venant du haut
 const float stopYBottom = 500.f;  // Zone d'arrêt pour les voitures venant du haut
-const float carSpeed = 0.00005f;    // Vitesse des voitures
+const float carSpeed = 0.0001f;    // Vitesse des voitures
 
 random_device rd;
 mt19937 gen(rd());
@@ -94,7 +94,7 @@ void moving_cars(vector<Voiture>& carsVector,
     
     while (!stopToken.stop_requested()) {
         // Check si le temps écoulé est égal ou supérieur à la limite donné de façon aléatoire ou si le vecteur est vide et qu'il n'y a pas de demande d'arrêt
-        if (carClock.getElapsedTime().asMilliseconds() >= spawnDelay || carsVector.empty()) {
+        if ((carClock.getElapsedTime().asMilliseconds() >= spawnDelay || carsVector.empty()) && carsVector.size() <= 5) {
             cout << "New car spawned ";
             switch (spawnAndTurnRand(gen)) {
             case 1:
@@ -145,14 +145,14 @@ void moving_cars(vector<Voiture>& carsVector,
 
             // La voiture peut se déplacer uniquement si elle est autorisée par le feu
             if (canMove) {
-                it->turn();
                 it->move();
+                it->turn();
             }
 
             // Si la voiture quitte la fenêtre, on l'efface
             if (currentX <= 2 || currentX >= 873 || currentY <= 2 || currentY >= 661) {
-                it = carsVector.erase(it);
-                cout << "Deleted car\n";
+                cout << "Respawned a car\n";
+                it->
             }
             else {
                 ++it;
