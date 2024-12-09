@@ -74,14 +74,14 @@ void Voiture::turn() {
     switch (spawn_) {
     case Spawn_area::UP: // original angle : 180
         if (this->getX() <= 500 && this->getY() >= 332 && turning_ == Turning::TURN_LEFT) {
-            angle_ -= 0.0001f;
+            angle_ -= 0.0002f;
             if (angle_ < 90.f) {
                 angle_ = 90.f;
             }
             spriteVoiture_.setRotation(angle_);
         }
         if (this->getX() >= 300 && this->getY() >= 332 && turning_ == Turning::TURN_RIGHT) {
-            angle_ += 0.0001f;
+            angle_ += 0.0002f;
             if (angle_ > 270.f) {
                 angle_ = 270.f;
             }
@@ -90,14 +90,14 @@ void Voiture::turn() {
         break;
     case Spawn_area::DOWN: // original angle : 0
         if (this->getX() >= 300 && this->getY() <= 339 && turning_ == Turning::TURN_LEFT) {
-            angle_ -= 0.0001f;
+            angle_ -= 0.0002f;
             if (angle_ < -90.f) {
                 angle_ = -90.f;
             }
             spriteVoiture_.setRotation(angle_);
         }
         if (this->getX() <= 500 && this->getY() <= 339 && turning_ == Turning::TURN_RIGHT) {
-            angle_ += 0.0001f;
+            angle_ += 0.0002f;
             if (angle_ > 90.f) {
                 angle_ = 90.f;
             }
@@ -105,15 +105,15 @@ void Voiture::turn() {
         }
         break;
     case Spawn_area::LEFT: // original angle : 90
-        if (this->getX() >= 354 && this->getY() >= 300 && turning_ == Turning::TURN_LEFT) {
-            angle_ -= 0.0001f;
+        if (this->getX() >= 414 && this->getY() >= 300 && turning_ == Turning::TURN_LEFT) {
+            angle_ -= 0.0002f;
             if (angle_ < 0.f) {
                 angle_ = 0.f;
             }
             spriteVoiture_.setRotation(angle_);
         }
-        if (this->getX() <= 354 && this->getY() <= 500 && turning_ == Turning::TURN_RIGHT) {
-            angle_ += 0.0001f;
+        if (this->getX() >= 405 && this->getY() <= 500 && turning_ == Turning::TURN_RIGHT) {
+            angle_ += 0.0002f;
             if (angle_ > 180.f) {
                 angle_ = 180.f;
             }
@@ -121,15 +121,15 @@ void Voiture::turn() {
         }
         break;
     case Spawn_area::RIGHT: // original angle : -90
-        if (this->getX() <= 523 && this->getY() <= 500 && turning_ == Turning::TURN_LEFT) {
-            angle_ -= 0.0001f;
+        if (this->getX() <= 463 && this->getY() <= 500 && turning_ == Turning::TURN_LEFT) {
+            angle_ -= 0.0002f;
             if (angle_ < -180.f) {
-                angle_ = 90.f;
+                angle_ = -180.f;
             }
             spriteVoiture_.setRotation(angle_);
         }
-        if (this->getX() <= 523 && this->getY() >= 300 && turning_ == Turning::TURN_RIGHT) {
-            angle_ += 0.0001f;
+        if (this->getX() <= 470 && this->getY() >= 300 && turning_ == Turning::TURN_RIGHT) {
+            angle_ += 0.0002f;
             if (angle_ > 0.f) {
                 angle_ = 0.f;
             }
