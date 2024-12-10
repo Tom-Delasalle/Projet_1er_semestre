@@ -160,6 +160,10 @@ int main() {
     circle4.setOrigin(circle4.getRadius() / 2, circle4.getRadius() / 2);
     circle4.setPosition(l2 - 130 + radius / 2, l2 - 65 + radius / 2);
 
+    // Zones d'arrêt pour les feux
+    const float stopXRight = 503; // Zone d'arrêt pour les voitures venant de la droite
+    const float stopXLeft = 374;  // Zone d'arrêt pour les voitures venant de la gauche
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
