@@ -13,7 +13,7 @@ const float stopXLeft = 374.f;    // Zone d'arrêt pour les voitures venant de la
 const float stopXRight = 503.f;   // Zone d'arrêt pour les voitures venant de la droite
 const float stopYUp = 300.f;      // Zone d'arrêt pour les voitures venant du haut
 const float stopYBottom = 500.f;  // Zone d'arrêt pour les voitures venant du haut
-const float carSpeed = 0.0001f;    // Vitesse des voitures
+const float carSpeed = 1.f;    // Vitesse des voitures
 
 // Générateur random
 random_device rd;
@@ -21,7 +21,7 @@ mt19937 gen(rd());
 uniform_int_distribution<int> carDelay(1500, 2500);
 uniform_int_distribution<int> spawnAndTurnRand(1, 4);
 // Protéger l'accès à carsVector
-mutex carMutex; 
+//mutex carMutex; 
 
 using namespace std;
 using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, ...
@@ -132,7 +132,7 @@ void moving_cars(Voiture& car,
             car.Respawn(spawn, turn);
         }
 
-        //this_thread::sleep_for(chrono::microseconds(1));
+        this_thread::sleep_for(chrono::microseconds(100));
     }
 
 }
@@ -263,7 +263,7 @@ int main() {
         window.draw(circle4);
 
         // Affiche toutes les voitures
-        lock_guard<mutex> lock(carMutex); // Protège l'accès à carsVector
+        //lock_guard<mutex> lock(carMutex); // Protège l'accès à carsVector
         for (const auto& car : carsVector) {
             if (car.spriteVoiture_.getTexture() == nullptr) {
                 cerr << "Erreur : Voiture sans texture\n";
