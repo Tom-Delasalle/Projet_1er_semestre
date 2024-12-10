@@ -5,7 +5,6 @@
 #include <mutex>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include "carrefour.hpp"
 #include "tricolore.hpp"
 #include "voiture.hpp"
 
@@ -13,7 +12,7 @@ const float stopXLeft = 374.f;    // Zone d'arrêt pour les voitures venant de la
 const float stopXRight = 503.f;   // Zone d'arrêt pour les voitures venant de la droite
 const float stopYUp = 300.f;      // Zone d'arrêt pour les voitures venant du haut
 const float stopYBottom = 500.f;  // Zone d'arrêt pour les voitures venant du haut
-const float carSpeed = 0.0001f;    // Vitesse des voitures
+const float carSpeed = 30.0f;    // Vitesse des voitures
 
 // Générateur random
 random_device rd;
@@ -98,8 +97,8 @@ void moving_cars(Voiture& car,
     float currentY = car.getY();
 
     while (!stopToken.stop_requested()) {
-        float deltaTime = carClock.restart().asSeconds();
 
+        float deltaTime = carClock.restart().asSeconds();
         currentX = car.getX();
         currentY = car.getY();
         bool canMove = true;
@@ -139,12 +138,10 @@ void moving_cars(Voiture& car,
 
 }
 
-
 int main() {
 
     stop_source stopping; // Crée stopping de la classe stop_source. Cela permet de générer de requêtes d'arrêts 
 
-    // Ajouter sf::Clock clock; au début de la boucle principale
     sf::Clock frameClock;
 
     // Listes des voitures
@@ -258,7 +255,6 @@ int main() {
         window.clear(sf::Color::Black); // Clear la fenêtre et affiche du noir
         window.draw(mapSprite);         // Dessine le sprite de fond
 
-        // Dans la boucle principale de `main()`, avant de dessiner
         float deltaTime = frameClock.restart().asSeconds();
 
         //window.draw(line1, 2, sf::Lines); // Dessine la line1
