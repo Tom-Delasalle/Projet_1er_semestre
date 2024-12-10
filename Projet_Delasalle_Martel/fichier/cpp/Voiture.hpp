@@ -35,7 +35,7 @@ public:
 	float getX();
 	float getY();
 	void set_speed(const float newSpeed);
-	void move();
+	void move(float deltaTime);
 	//void stop();
 	void turn();
 };

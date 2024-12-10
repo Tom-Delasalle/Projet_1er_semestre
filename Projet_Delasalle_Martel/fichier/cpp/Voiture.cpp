@@ -93,13 +93,14 @@ void Voiture::set_speed(const float newSpeed) {
     speed_ = newSpeed;
 }
 
-void Voiture::move() {
-
-    posX_ += static_cast<float>(cos((angle_ - 90) * PI / 180.0) * speed_);
-    posY_ += static_cast<float>(sin((angle_ - 90) * PI / 180.0) * speed_);
-    spriteVoiture_.setPosition(this->getX(), this->getY());
-
+void Voiture::move(float deltaTime) {
+    float moveX = static_cast<float>(cos((angle_ - 90) * PI / 180.0) * speed_ * deltaTime);
+    float moveY = static_cast<float>(sin((angle_ - 90) * PI / 180.0) * speed_ * deltaTime);
+    posX_ += moveX;
+    posY_ += moveY;
+    spriteVoiture_.move(moveX, moveY);
 }
+
 
 void Voiture::turn() {
 
