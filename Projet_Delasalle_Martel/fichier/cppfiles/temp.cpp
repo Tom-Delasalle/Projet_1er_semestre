@@ -135,7 +135,7 @@ int main() {
 
     // Listes des voitures
     std::vector<Voiture> carsForward, carsVector;
-    const float carSpeed = 0.1f;
+    const float carSpeed = 1.2f;
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> delayDist(500, 1500);

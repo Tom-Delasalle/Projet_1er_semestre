@@ -88,18 +88,36 @@ void print_traffic_light(Traffic_light& traffic_light_master, Traffic_light& tra
 }
 
 // Thread function for moving the cars
-void moving_cars(vector<Voiture>& carsVector,
-    sf::Texture& imageVoiture,
-    Turning& turn,
+void moving_cars(Voiture& car,
     Spawn_area& spawn,
-    sf::Clock& carClock,
-    int spawnDelay,
+    Turning& turn,
     stop_token stopToken) {
     
+    float currentX = car.getX();
+    float currentY = car.getY();
+
     while (!stopToken.stop_requested()) {
-        // Check si le temps écoulé est égal ou supérieur à la limite donné de façon aléatoire ou si le vecteur est vide et qu'il n'y a pas de demande d'arrêt
-        if ((carClock.getElapsedTime().asMilliseconds() >= spawnDelay || carsVector.empty()) && carsVector.size() <= 5) {
-            cout << "New car spawned ";
+
+        currentX = car.getX();
+        currentY = car.getY();
+        bool canMove = true;
+
+        /* Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
+        if (trafficLightSlave.getColor() != TrafficColor::Green &&
+            currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
+            canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
+        }*/
+
+        // La voiture peut se déplacer uniquement si elle est autorisée par le feu
+        if (canMove) {
+            car.move();
+            car.turn();
+        }
+
+            
+        // Si la voiture quitte la fenêtre, on l'efface
+        if (currentX <= 0 || currentX >= 875 || currentY <= 0 || currentY >= 663) {
+            cout << "Respawned a car ";
             switch (spawnAndTurnRand(gen)) {
             case 1: spawn = Spawn_area::UP; cout << "at the top "; break;
             case 2: spawn = Spawn_area::DOWN;  cout << "at the bottom "; break;
@@ -111,53 +129,11 @@ void moving_cars(vector<Voiture>& carsVector,
             case 2: turn = Turning::TURN_RIGHT; cout << "turning right\n"; break;
             default:  turn = Turning::NO_TURN; cout << "not turning\n";
             }
-            Voiture carSingle(carSpeed, ref(imageVoiture), spawn, turn); // Créé une nouvelle voiture
-            {
-                lock_guard<mutex> lock(carMutex);
-                carsVector.push_back(carSingle); // Push dans le vecteur
-            }
-            spawnDelay = carDelay(gen); // Nouveau délai pour spawn la prochaine voiture
-            carClock.restart(); // On remet l'horloge à zéro
+            car.Respawn(spawn, turn);
         }
 
-        lock_guard<mutex> lock(carMutex);
-        for (auto it = carsVector.begin(); it != carsVector.end();) {
-            float currentX = it->spriteVoiture_.getPosition().x;
-            float currentY = it->spriteVoiture_.getPosition().y;
-            bool canMove = true;
-
-            /* Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
-            if (trafficLightSlave.getColor() != TrafficColor::Green &&
-                currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
-                canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
-            }*/
-
-            // La voiture peut se déplacer uniquement si elle est autorisée par le feu
-            if (canMove) {
-                it->move();
-                it->turn();
-            }
-
-            // Si la voiture quitte la fenêtre, on l'efface
-            if (currentX <= 2 || currentX >= 873 || currentY <= 2 || currentY >= 661) {
-                cout << "Respawned a car ";
-                switch (spawnAndTurnRand(gen)) {
-                case 1: spawn = Spawn_area::UP; cout << "at the top "; break;
-                case 2: spawn = Spawn_area::DOWN;  cout << "at the bottom "; break;
-                case 3: spawn = Spawn_area::LEFT; cout << "to the left "; break;
-                default: spawn = Spawn_area::RIGHT; cout << "to the right ";
-                }
-                switch (spawnAndTurnRand(gen)) {
-                case 1: turn = Turning::TURN_LEFT; cout << "turning left\n"; break;
-                case 2: turn = Turning::TURN_RIGHT; cout << "turning right\n"; break;
-                default:  turn = Turning::NO_TURN; cout << "not turning\n";
-                }
-                it->Respawn(spawn, turn);
-            }
-            it++;
-        }
+        //this_thread::sleep_for(chrono::microseconds(1));
     }
-    
 
 }
 
@@ -168,8 +144,8 @@ int main() {
     // Listes des voitures
     vector<Voiture> carsVector;
 
-    Turning turn;
-    Spawn_area spawn;
+    Turning turn, turn1, turn2, turn3, turn4, turn5, turn6;
+    Spawn_area spawn, spawn1, spawn2, spawn3, spawn4, spawn5, spawn6;
 
     // Horloges pour l'apparition des voitures
     sf::Clock carClock;
@@ -182,14 +158,49 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    jthread jthread_moving_cars(moving_cars,
-        ref(carsVector),
-        ref(imageVoiture),
-        ref(turn),
-        ref(spawn),
-        ref(carClock),
-        spawnDelay,
-        stopping.get_token());
+    int i = 0;
+    for (i; i < 6; ++i) {
+        cout << "New car spawned ";
+        switch (spawnAndTurnRand(gen)) {
+        case 1: spawn = Spawn_area::UP; cout << "at the top "; break;
+        case 2: spawn = Spawn_area::DOWN;  cout << "at the bottom "; break;
+        case 3: spawn = Spawn_area::LEFT; cout << "to the left "; break;
+        default: spawn = Spawn_area::RIGHT; cout << "to the right ";
+        }
+        switch (spawnAndTurnRand(gen)) {
+        case 1: turn = Turning::TURN_LEFT; cout << "turning left\n"; break;
+        case 2: turn = Turning::TURN_RIGHT; cout << "turning right\n"; break;
+        default: turn = Turning::NO_TURN; cout << "not turning\n";
+        }
+        switch (i) {
+        case 0: spawn1 = spawn; turn1 = turn; break;
+        case 1: spawn2 = spawn; turn2 = turn; break;
+        case 2: spawn3 = spawn; turn3 = turn; break;
+        case 3: spawn4 = spawn; turn4 = turn; break;
+        case 4: spawn5 = spawn; turn5 = turn; break;
+        case 5: spawn6 = spawn; turn6 = turn;
+        }
+    }
+
+    Voiture carSingle1(carSpeed, ref(imageVoiture), spawn1, turn1); // Créé une nouvelle voiture
+    carsVector.push_back(carSingle1); // Push dans le vecteur
+    Voiture carSingle2(carSpeed, ref(imageVoiture), spawn2, turn2); // Créé une nouvelle voiture
+    carsVector.push_back(carSingle2); // Push dans le vecteur
+    Voiture carSingle3(carSpeed, ref(imageVoiture), spawn3, turn3); // Créé une nouvelle voiture
+    carsVector.push_back(carSingle3); // Push dans le vecteur
+    Voiture carSingle4(carSpeed, ref(imageVoiture), spawn4, turn4); // Créé une nouvelle voiture
+    carsVector.push_back(carSingle4); // Push dans le vecteur
+    Voiture carSingle5(carSpeed, ref(imageVoiture), spawn5, turn5); // Créé une nouvelle voiture
+    carsVector.push_back(carSingle5); // Push dans le vecteur
+    Voiture carSingle6(carSpeed, ref(imageVoiture), spawn6, turn6); // Créé une nouvelle voiture
+    carsVector.push_back(carSingle6); // Push dans le vecteur
+
+    jthread jthread_moving_car1(moving_cars, ref(carsVector.at(0)), ref(spawn1), ref(turn1), stopping.get_token());
+    jthread jthread_moving_car2(moving_cars, ref(carsVector.at(1)), ref(spawn2), ref(turn2), stopping.get_token());
+    jthread jthread_moving_car3(moving_cars, ref(carsVector.at(2)), ref(spawn3), ref(turn3), stopping.get_token());
+    jthread jthread_moving_car4(moving_cars, ref(carsVector.at(3)), ref(spawn4), ref(turn4), stopping.get_token());
+    jthread jthread_moving_car5(moving_cars, ref(carsVector.at(4)), ref(spawn5), ref(turn5), stopping.get_token());
+    jthread jthread_moving_car6(moving_cars, ref(carsVector.at(5)), ref(spawn6), ref(turn6), stopping.get_token());
 
     Traffic_light traffic_light_master{ Traffic_color::red }; // Crée le feu tricolore maître et esclave et les initialise
     Traffic_light traffic_light_slave{ Traffic_color::red };  // avec la couleur rouge par défaut
