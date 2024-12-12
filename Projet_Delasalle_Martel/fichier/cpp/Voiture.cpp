@@ -101,7 +101,6 @@ void Voiture::move(float deltaTime) {
     spriteVoiture_.move(moveX, moveY);
 }
 
-
 void Voiture::turn() {
 
     switch (spawn_) {
