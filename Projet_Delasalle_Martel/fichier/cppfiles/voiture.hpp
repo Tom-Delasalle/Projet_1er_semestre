@@ -29,9 +29,9 @@ public:
 	sf::Texture imageVoiture_;
 	sf::Sprite spriteVoiture_;
 	// Constructor
-	Voiture(const float speed, const sf::Texture& imageVoiture, const Spawn_area& spawn, const Turning& turning);
+	Voiture(const float speed, const sf::Texture& imageVoiture, const Spawn_area spawn, const Turning turning);
 	// Functions
-	void Respawn(const Spawn_area& spawn, const Turning& turning);
+	void Respawn(const Spawn_area spawn, const Turning turning);
 	float getX();
 	float getY();
 	void set_speed(const float newSpeed);
