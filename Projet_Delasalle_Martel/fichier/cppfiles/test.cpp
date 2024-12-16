@@ -156,7 +156,7 @@ void moving_cars(Voiture& car,
 
 		canMove = true;
 
-		this_thread::sleep_for(chrono::milliseconds(1));
+		this_thread::sleep_for(chrono::milliseconds(10));
 	}
 
 }
