@@ -9,10 +9,10 @@
 #include "tricolore.hpp"
 #include "voiture.hpp"
 
-const float stopXLeft = 374.f;    // Zone d'arrêt pour les voitures venant de la gauche
-const float stopXRight = 503.f;   // Zone d'arrêt pour les voitures venant de la droite
-const float stopYUp = 300.f;      // Zone d'arrêt pour les voitures venant du haut
-const float stopYBottom = 500.f;  // Zone d'arrêt pour les voitures venant du haut
+const float stopXLeft = 344.f;    // Zone d'arrêt pour les voitures venant de la gauche
+const float stopXRight = 530.f;   // Zone d'arrêt pour les voitures venant de la droite
+const float stopYUp = 242.f;      // Zone d'arrêt pour les voitures venant du haut
+const float stopYDown = 430.f;  // Zone d'arrêt pour les voitures venant du haut
 const float carSpeed = 1.f;    // Vitesse des voitures
 
 // Générateur random
@@ -83,33 +83,52 @@ void print_traffic_light(Traffic_light& traffic_light_master, Traffic_light& tra
 	while (!stop_token.stop_requested())
 	{
 		this_thread::sleep_for(1s);
-		cout << "Taffic light master : " << traffic_light_master << " Taffic light slave : " << traffic_light_slave << endl;
+		cout << "Traffic light master : " << traffic_light_master << " Traffic light slave : " << traffic_light_slave << endl;
 	}
 }
 
 // Thread function for moving the cars
 void moving_cars(Voiture& car,
-	Spawn_area& spawn,
-	Turning& turn,
+	Traffic_light& traffic_light_master,
+	Traffic_light& traffic_light_slave,
+	Spawn_area spawn,
+	Turning turn,
 	chrono::seconds delayMove,
 	stop_token stopToken) {
-	
-	float currentX = car.getX();
-	float currentY = car.getY();
+
+	bool canMove = true;
 
 	this_thread::sleep_for(delayMove);
 
 	while (!stopToken.stop_requested()) {
-
-		currentX = car.getX();
-		currentY = car.getY();
-		bool canMove = true;
 
 		/* Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
 		if (trafficLightSlave.getColor() != TrafficColor::Green &&
 			currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
 			canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
 		}*/
+		switch (spawn) {
+		case Spawn_area::UP:
+			if (car.getY() <= stopYUp && car.getY() >= stopYUp - 6.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			break;
+		case Spawn_area::DOWN:
+			if (car.getY() >= stopYDown && car.getY() <= stopYDown + 6.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			break;
+		case Spawn_area::LEFT:
+			if (car.getX() <= stopXLeft && car.getX() >= stopXLeft - 6.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			break;
+		case Spawn_area::RIGHT:
+			if (car.getX() >= stopXRight && car.getX() <= stopXRight + 6.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			break;
+		}
 
 		// La voiture peut se déplacer uniquement si elle est autorisée par le feu et qu'elle ne vas pas heurter un véhicule ou piéton
 		if (canMove) {
@@ -119,21 +138,23 @@ void moving_cars(Voiture& car,
 
 			
 		// Si la voiture quitte la fenêtre, on la fait réapparaître à un autre endroit
-		if (currentX <= -6 || currentX >= 883 || currentY <= -6 || currentY >= 675) {
+		if (car.getX() <= -13.f || car.getX() >= 890.f || car.getY() <= -13.f || car.getY() >= 672.f) {
 			cout << "Respawned a car ";
 			switch (spawnAndTurnRand(gen)) {
 			case 1: spawn = Spawn_area::UP; cout << "at the TOP    "; break;
 			case 2: spawn = Spawn_area::DOWN;  cout << "at the BOTTOM "; break;
 			case 3: spawn = Spawn_area::LEFT; cout << "to the LEFT   "; break;
-			default: spawn = Spawn_area::RIGHT; cout << "to the RIGHT  ";
+			default: spawn = Spawn_area::RIGHT; cout << "to the RIGHT  "; break;
 			}
 			switch (spawnAndTurnRand(gen)) {
 			case 1: turn = Turning::TURN_LEFT; cout << "turning LEFT\n"; break;
-			case 2: turn = Turning::TURN_RIGHT; cout << "turning RIGHT\n"; break;
-			default:  turn = Turning::TURN_LEFT; cout << "NOT turning\n";
+			case 2: turn = Turning::TURN_LEFT; cout << "turning LEFT\n"; break;
+			default: turn = Turning::TURN_RIGHT; cout << "turning RIGHT\n"; break;
 			}
 			car.Respawn(spawn, turn);
 		}
+
+		canMove = true;
 
 		this_thread::sleep_for(chrono::milliseconds(1));
 	}
@@ -153,6 +174,12 @@ int main() {
 	// Horloges pour l'apparition des voitures
 	//sf::Clock carClock;
 	//int spawnDelay = carDelay(gen);
+
+
+	Traffic_light traffic_light_master{ Traffic_color::red }; // Crée le feu tricolore maître et esclave et les initialise
+	Traffic_light traffic_light_slave{ Traffic_color::red };  // avec la couleur rouge par défaut
+	jthread thread_traffic_light_master(run_traffic_light,
+		ref(traffic_light_master), ref(traffic_light_slave), stopping.get_token());
 
 	// Charge l'image de la voiture
 	sf::Texture imageVoiture;
@@ -199,18 +226,13 @@ int main() {
 	carsVector.push_back(carSingle6); // Push dans le vecteur
 
 	auto delayMove = chrono::seconds(0);
-
-	jthread jthread_moving_car1(moving_cars, ref(carsVector.at(0)), ref(spawn1), ref(turn1), delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
-	jthread jthread_moving_car2(moving_cars, ref(carsVector.at(1)), ref(spawn2), ref(turn2), delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
-	jthread jthread_moving_car3(moving_cars, ref(carsVector.at(2)), ref(spawn3), ref(turn3), delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
-	jthread jthread_moving_car4(moving_cars, ref(carsVector.at(3)), ref(spawn4), ref(turn4), delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
-	jthread jthread_moving_car5(moving_cars, ref(carsVector.at(4)), ref(spawn5), ref(turn5), delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
-	jthread jthread_moving_car6(moving_cars, ref(carsVector.at(5)), ref(spawn6), ref(turn6), delayMove, stopping.get_token());
-
-	Traffic_light traffic_light_master{ Traffic_color::red }; // Crée le feu tricolore maître et esclave et les initialise
-	Traffic_light traffic_light_slave{ Traffic_color::red };  // avec la couleur rouge par défaut
-	jthread thread_traffic_light_master(run_traffic_light,
-		ref(traffic_light_master), ref(traffic_light_slave), stopping.get_token());
+	carsVector.at(0).Respawn(Spawn_area::RIGHT, Turning::TURN_LEFT);
+	jthread jthread_moving_car1(moving_cars, ref(carsVector.at(0)), ref(traffic_light_master), ref(traffic_light_slave), spawn1, turn1, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
+	jthread jthread_moving_car2(moving_cars, ref(carsVector.at(1)), ref(traffic_light_master), ref(traffic_light_slave), spawn2, turn2, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
+	jthread jthread_moving_car3(moving_cars, ref(carsVector.at(2)), ref(traffic_light_master), ref(traffic_light_slave), spawn3, turn3, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
+	jthread jthread_moving_car4(moving_cars, ref(carsVector.at(3)), ref(traffic_light_master), ref(traffic_light_slave), spawn4, turn4, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
+	jthread jthread_moving_car5(moving_cars, ref(carsVector.at(4)), ref(traffic_light_master), ref(traffic_light_slave), spawn5, turn5, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
+	jthread jthread_moving_car6(moving_cars, ref(carsVector.at(5)), ref(traffic_light_master), ref(traffic_light_slave), spawn6, turn6, delayMove, stopping.get_token());
 
 	//sf::RenderWindow window(sf::VideoMode(800, 800), "My window"); Crée une fenêtre "My window" de dessin 2D SFML de 800 x 800 pixels 
 	sf::RenderWindow window(sf::VideoMode(877, 669), "Carrefour Vauban");

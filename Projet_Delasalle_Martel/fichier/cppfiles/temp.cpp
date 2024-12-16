@@ -267,3 +267,27 @@ int main() {
 
     return EXIT_SUCCESS;
 }
+
+
+for (i; i < 6; ++i) {
+    cout << "New car spawned ";
+    switch (spawnAndTurnRand(gen)) {
+    case 1: spawn = Spawn_area::UP; cout << "at the TOP    "; break;
+    case 2: spawn = Spawn_area::DOWN;  cout << "at the BOTTOM "; break;
+    case 3: spawn = Spawn_area::LEFT; cout << "to the LEFT   "; break;
+    default: spawn = Spawn_area::RIGHT; cout << "to the RIGHT  ";
+    }
+    switch (spawnAndTurnRand(gen)) {
+    case 1: turn = Turning::TURN_LEFT; cout << "turning LEFT\n"; break;
+    case 2: turn = Turning::TURN_RIGHT; cout << "turning RIGHT\n"; break;
+    default: turn = Turning::NO_TURN; cout << "NOT turning\n";
+    }
+    switch (i) {
+    case 0: spawn1 = spawn; turn1 = turn; break;
+    case 1: spawn2 = spawn; turn2 = turn; break;
+    case 2: spawn3 = spawn; turn3 = turn; break;
+    case 3: spawn4 = spawn; turn4 = turn; break;
+    case 4: spawn5 = spawn; turn5 = turn; break;
+    case 5: spawn6 = spawn; turn6 = turn;
+    }
+}
