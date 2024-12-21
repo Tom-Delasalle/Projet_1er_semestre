@@ -129,7 +129,7 @@ void moving_cars(vector<Voiture>& carsVector,
 
 		// Boucle pour appliquer la fonction isNotClose à chaque voiture présente
 		for (int i = 0; i < carsVector.size(); ++i) {
-			if (carsVector.at(i).getX() != car.getX() || carsVector.at(i).getY() != car.getY() || !canMove) {
+			if ((carsVector.at(i).getX() != car.getX() || carsVector.at(i).getY() != car.getY()) && canMove ) {
 				canMove = car.isNotClose(carsVector.at(i).getX(), carsVector.at(i).getY());
 			}
 		}
@@ -139,7 +139,6 @@ void moving_cars(vector<Voiture>& carsVector,
 			car.move();
 			car.turn();
 		}
-
 			
 		// Si la voiture quitte la fenêtre, on la fait réapparaître à un autre endroit
 		if (car.getX() <= -18.f || car.getX() >= 895.f || car.getY() <= -18.f || car.getY() >= 677.f) {
@@ -152,8 +151,8 @@ void moving_cars(vector<Voiture>& carsVector,
 			}
 			switch (spawnAndTurnRand(gen)) {
 			case 1: turn = Turning::TURN_LEFT; cout << "turning LEFT\n"; break;
-			case 2: turn = Turning::TURN_LEFT; cout << "turning LEFT\n"; break;
-			default: turn = Turning::TURN_RIGHT; cout << "turning RIGHT\n"; break;
+			case 2: turn = Turning::TURN_RIGHT; cout << "turning RIGHT\n"; break;
+			default: turn = Turning::NO_TURN; cout << "NOT turning\n"; break;
 			}
 			carLock.lock(); // Mutex lock pour éviter que les véhicules réapparaissent les uns sur les autres
 			this_thread::sleep_for(chrono::milliseconds(750));
@@ -306,7 +305,7 @@ int main() {
 		//lock_guard<mutex> lock(carMutex); // Protège l'accès à carsVector
 		for (const auto& car : carsVector) {
 			window.draw(car.spriteVoiture_);
-			window.draw(car.circleTest);
+			//window.draw(car.circleTest);
 		}
 
 		window.display(); // Affiche la fenêtre

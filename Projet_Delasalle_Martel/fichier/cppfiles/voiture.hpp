@@ -32,7 +32,7 @@ private:
 public:
 	sf::Texture imageVoiture_;
 	sf::Sprite spriteVoiture_;
-	sf::CircleShape circleTest;
+	//f::CircleShape circleTest;
 	// Constructor
 	Voiture(const float speed, const sf::Texture& imageVoiture, const Spawn_area spawn, const Turning turning);
 	// Functions
