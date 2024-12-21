@@ -9,7 +9,6 @@
 #define PI 3.14159265358979323846
 
 using namespace std;
-using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, ...
 
 float switch_posX(const Spawn_area& spawn) {
 
@@ -53,24 +52,30 @@ float switch_angle(const Spawn_area& spawn) {
 
 }
 
-OnFoot::OnFoot(const float speed, const sf::Texture& imagePieton, const Spawn_area& spawn, const Turning& turning)
+OnFoot::OnFoot(const float speed, const sf::Texture& imagePieton, const Spawn_area spawn, const Turning turning)
     : spawn_(spawn), turning_(turning), speed_(speed), imagePieton_(ref(imagePieton)) {
 
-    spriteVoiture_.setTexture(imagePieton);
-    spriteVoiture_.setScale(0.1f, 0.1f);
+    spritePieton_.setTexture(imagePieton);
+    if (spritePieton_.getTexture() == nullptr) {
+        cerr << "Erreur : Pieton sans texture\n";
+    }
+    spritePieton_.setOrigin(92.f, 160.f);
+    spritePieton_.setScale(0.1f, 0.1f);
 
     posX_ = switch_posX(spawn);
     posY_ = switch_posY(spawn);
     angle_ = switch_angle(spawn);
-
     spritePieton_.setPosition(posX_, posY_);
     spritePieton_.setRotation(angle_);
 
 }
 
+
+
 void OnFoot::Respawn(const Spawn_area& spawn, const Turning& turning) {
 
     turning_ = turning;
+    spawn_ = spawn;
 
     posX_ = switch_posX(spawn);
     posY_ = switch_posY(spawn);
@@ -126,7 +131,7 @@ void OnFoot::turn() {
             if (angle_ < -90.f) {
                 angle_ = -90.f;
             }
-            spriteVoiture_.setRotation(angle_);
+            spritePieton_.setRotation(angle_);
         }
         if (this->getX() <= 500 && this->getY() <= 365 && turning_ == Turning::TURN_RIGHT) {
             angle_ += 2.f;
