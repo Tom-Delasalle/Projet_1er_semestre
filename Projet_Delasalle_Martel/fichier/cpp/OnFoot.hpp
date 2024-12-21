@@ -15,6 +15,7 @@ enum class Turning {
 	NO_TURN = 3
 };
 
+
 class OnFoot {
 private:
 	float posX_;
@@ -27,7 +28,7 @@ public:
 	sf::Texture imagePieton_;
 	sf::Sprite spritePieton_;
 	// Constructor
-	OnFoot(const float speed, const sf::Texture& imagePieton, const Spawn_area& spawn, const Turning& turning);
+	OnFoot(const float speed, const sf::Texture& imagePieton, const Spawn_area spawn, const Turning turning);
 	// Functions
 	void Respawn(const Spawn_area& spawn, const Turning& turning);
 	float getX();

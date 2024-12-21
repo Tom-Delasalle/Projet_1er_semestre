@@ -5,7 +5,6 @@
 #include <mutex>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include "carrefour.hpp"
 #include "tricolore.hpp"
 #include "voiture.hpp"
 
