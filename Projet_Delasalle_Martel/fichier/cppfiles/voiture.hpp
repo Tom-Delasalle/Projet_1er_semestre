@@ -25,10 +25,14 @@ private:
 	float angle_;
 	Spawn_area spawn_;
 	Turning turning_;
+	float centerCollisionX_;
+	float centerCollisionY_;
+	float radiusCollision_;
+	float carAndCenterGap_;
 public:
 	sf::Texture imageVoiture_;
 	sf::Sprite spriteVoiture_;
-	sf::CircleShape circleCollision_;
+	sf::CircleShape circleTest;
 	// Constructor
 	Voiture(const float speed, const sf::Texture& imageVoiture, const Spawn_area spawn, const Turning turning);
 	// Functions
@@ -38,4 +42,5 @@ public:
 	void move();
 	//void stop();
 	void turn();
+	bool isNotClose(const float otherPosX, const float otherPosY);
 };
