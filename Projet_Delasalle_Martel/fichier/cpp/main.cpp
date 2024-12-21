@@ -7,12 +7,14 @@
 #include <SFML/Graphics.hpp>
 #include "tricolore.hpp"
 #include "voiture.hpp"
+#include "OnFoot.hpp"
 
 const float stopXLeft = 374.f;    // Zone d'arrêt pour les voitures venant de la gauche
 const float stopXRight = 503.f;   // Zone d'arrêt pour les voitures venant de la droite
 const float stopYUp = 300.f;      // Zone d'arrêt pour les voitures venant du haut
 const float stopYBottom = 500.f;  // Zone d'arrêt pour les voitures venant du haut
-const float carSpeed = 30.0f;    // Vitesse des voitures
+const float carSpeed = 1.f;    // Vitesse des voitures
+const float pietonSpeed = 1.f;    // Vitesse des piétons
 
 // Générateur random
 random_device rd;
@@ -20,7 +22,7 @@ mt19937 gen(rd());
 uniform_int_distribution<int> carDelay(1500, 2500);
 uniform_int_distribution<int> spawnAndTurnRand(1, 4);
 // Protéger l'accès à carsVector
-mutex carMutex;
+//mutex carMutex; 
 
 using namespace std;
 using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, ...
@@ -92,13 +94,11 @@ void moving_cars(Voiture& car,
     Turning& turn,
     stop_token stopToken) {
 
-    sf::Clock carClock;
     float currentX = car.getX();
     float currentY = car.getY();
 
     while (!stopToken.stop_requested()) {
 
-        float deltaTime = carClock.restart().asSeconds();
         currentX = car.getX();
         currentY = car.getY();
         bool canMove = true;
@@ -111,7 +111,7 @@ void moving_cars(Voiture& car,
 
         // La voiture peut se déplacer uniquement si elle est autorisée par le feu
         if (canMove) {
-            car.move(deltaTime);
+            car.move();
             car.turn();
         }
 
@@ -133,19 +133,79 @@ void moving_cars(Voiture& car,
             car.Respawn(spawn, turn);
         }
 
-        //this_thread::sleep_for(chrono::microseconds(1));
+        this_thread::sleep_for(chrono::microseconds(100));
     }
 
 }
+
+
+
+
+
+
+// Thread function for moving the PIETON
+void moving_pietons(OnFoot& pieton,
+    Spawn_area& spawn,
+    Turning& turn,
+    stop_token stopToken) {
+
+    float currentX = pieton.getX();
+    float currentY = pieton.getY();
+
+    while (!stopToken.stop_requested()) {
+
+        currentX = pieton.getX();
+        currentY = pieton.getY();
+        bool canMove = true;
+
+        /* Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
+        if (trafficLightSlave.getColor() != TrafficColor::Green &&
+            currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
+            canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
+        }*/
+
+        // Le piéton peut se déplacer uniquement si elle est autorisée par le feu
+        if (canMove) {
+            pieton.move();
+            pieton.turn();
+        }
+
+
+        // Si le piéton quitte la fenêtre, on l'efface
+        if (currentX <= 0 || currentX >= 875 || currentY <= 0 || currentY >= 663) {
+            cout << "Respawned a pedestrian ";
+            switch (spawnAndTurnRand(gen)) {
+            case 1: spawn = Spawn_area::UP; cout << "at the top "; break;
+            case 2: spawn = Spawn_area::DOWN;  cout << "at the bottom "; break;
+            case 3: spawn = Spawn_area::LEFT; cout << "to the left "; break;
+            default: spawn = Spawn_area::RIGHT; cout << "to the right ";
+            }
+            switch (spawnAndTurnRand(gen)) {
+            case 1: turn = Turning::TURN_LEFT; cout << "turning left\n"; break;
+            case 2: turn = Turning::TURN_RIGHT; cout << "turning right\n"; break;
+            default:  turn = Turning::NO_TURN; cout << "not turning\n";
+            }
+            pieton.Respawn(spawn, turn);
+        }
+
+        this_thread::sleep_for(chrono::microseconds(100));
+    }
+
+}
+
+
+
+
 
 int main() {
 
     stop_source stopping; // Crée stopping de la classe stop_source. Cela permet de générer de requêtes d'arrêts 
 
-    sf::Clock frameClock;
-
     // Listes des voitures
     vector<Voiture> carsVector;
+
+    //Listes des piétons
+    vector<OnFoot> pietonsVector;
 
     Turning turn, turn1, turn2, turn3, turn4, turn5, turn6;
     Spawn_area spawn, spawn1, spawn2, spawn3, spawn4, spawn5, spawn6;
@@ -158,6 +218,13 @@ int main() {
     sf::Texture imageVoiture;
     if (!imageVoiture.loadFromFile("../../../../img/voiture.png")) {
         cerr << "Erreur : Impossible de charger l'image voiture.png\n";
+        return EXIT_FAILURE;
+    }
+
+    // Charge l'image du piéton
+    sf::Texture imagePieton;
+    if (!imagePieton.loadFromFile("../../../../img/PersoM.png")) {
+        cerr << "Erreur : Impossible de charger l'image du piéton.png\n";
         return EXIT_FAILURE;
     }
 
@@ -185,6 +252,10 @@ int main() {
         }
     }
 
+
+
+
+
     Voiture carSingle1(carSpeed, ref(imageVoiture), spawn1, turn1); // Créé une nouvelle voiture
     carsVector.push_back(carSingle1); // Push dans le vecteur
     Voiture carSingle2(carSpeed, ref(imageVoiture), spawn2, turn2); // Créé une nouvelle voiture
@@ -197,6 +268,52 @@ int main() {
     carsVector.push_back(carSingle5); // Push dans le vecteur
     Voiture carSingle6(carSpeed, ref(imageVoiture), spawn6, turn6); // Créé une nouvelle voiture
     carsVector.push_back(carSingle6); // Push dans le vecteur
+
+    int k = 0;
+    for (k; k < 6; ++k) {
+        cout << "New pedestrian spawned ";
+        switch (spawnAndTurnRand(gen)) {
+        case 1: spawn = Spawn_area::UP; cout << "at the top "; break;
+        case 2: spawn = Spawn_area::DOWN;  cout << "at the bottom "; break;
+        case 3: spawn = Spawn_area::LEFT; cout << "to the left "; break;
+        default: spawn = Spawn_area::RIGHT; cout << "to the right ";
+        }
+        switch (spawnAndTurnRand(gen)) {
+        case 1: turn = Turning::TURN_LEFT; cout << "turning left\n"; break;
+        case 2: turn = Turning::TURN_RIGHT; cout << "turning right\n"; break;
+        default: turn = Turning::NO_TURN; cout << "not turning\n";
+        }
+        switch (k) {
+        case 0: spawn1 = spawn; turn1 = turn; break;
+        case 1: spawn2 = spawn; turn2 = turn; break;
+        case 2: spawn3 = spawn; turn3 = turn; break;
+        case 3: spawn4 = spawn; turn4 = turn; break;
+        case 4: spawn5 = spawn; turn5 = turn; break;
+        case 5: spawn6 = spawn; turn6 = turn;
+        }
+    }
+
+    OnFoot pietonSingle1(pietonSpeed, ref(imagePieton), spawn1, turn1); // Créé une nouvelle voiture
+    pietonsVector.push_back(pietonSingle1); // Push dans le vecteur
+    OnFoot pietonSingle2(pietonSpeed, ref(imagePieton), spawn2, turn2); // Créé une nouvelle voiture
+    pietonsVector.push_back(pietonSingle2); // Push dans le vecteur
+    OnFoot pietonSingle3(pietonSpeed, ref(imagePieton), spawn3, turn3); // Créé une nouvelle voiture
+    pietonsVector.push_back(pietonSingle3); // Push dans le vecteur
+    OnFoot pietonSingle4(pietonSpeed, ref(imagePieton), spawn4, turn4); // Créé une nouvelle voiture
+    pietonsVector.push_back(pietonSingle4); // Push dans le vecteur
+    OnFoot pietonSingle5(pietonSpeed, ref(imagePieton), spawn5, turn5); // Créé une nouvelle voiture
+    pietonsVector.push_back(pietonSingle5); // Push dans le vecteur
+    OnFoot pietonSingle6(pietonSpeed, ref(imagePieton), spawn6, turn6); // Créé une nouvelle voiture
+    pietonsVector.push_back(pietonSingle6); // Push dans le vecteur
+
+
+    jthread jthread_moving_pieton1(moving_cars, ref(pietonsVector.at(0)), ref(spawn1), ref(turn1), stopping.get_token());
+    jthread jthread_moving_pieton2(moving_cars, ref(pietonsVector.at(1)), ref(spawn2), ref(turn2), stopping.get_token());
+    jthread jthread_moving_pieton3(moving_cars, ref(pietonsVector.at(2)), ref(spawn3), ref(turn3), stopping.get_token());
+    jthread jthread_moving_pieton4(moving_cars, ref(pietonsVector.at(3)), ref(spawn4), ref(turn4), stopping.get_token());
+    jthread jthread_moving_pieton5(moving_cars, ref(pietonsVector.at(4)), ref(spawn5), ref(turn5), stopping.get_token());
+    jthread jthread_moving_pieton6(moving_cars, ref(pietonsVector.at(5)), ref(spawn6), ref(turn6), stopping.get_token());
+
 
     jthread jthread_moving_car1(moving_cars, ref(carsVector.at(0)), ref(spawn1), ref(turn1), stopping.get_token());
     jthread jthread_moving_car2(moving_cars, ref(carsVector.at(1)), ref(spawn2), ref(turn2), stopping.get_token());
@@ -255,8 +372,6 @@ int main() {
         window.clear(sf::Color::Black); // Clear la fenêtre et affiche du noir
         window.draw(mapSprite);         // Dessine le sprite de fond
 
-        float deltaTime = frameClock.restart().asSeconds();
-
         //window.draw(line1, 2, sf::Lines); // Dessine la line1
         circle1.setFillColor(get_SFML_color(traffic_light_slave)); // Change la couleur de fond du cercle1
         circle2.setFillColor(get_SFML_color(traffic_light_master));
@@ -268,13 +383,21 @@ int main() {
         window.draw(circle4);
 
         // Affiche toutes les voitures
-        lock_guard<mutex> lock(carMutex); // Protège l'accès à carsVector
+        //lock_guard<mutex> lock(carMutex); // Protège l'accès à carsVector
         for (const auto& car : carsVector) {
             if (car.spriteVoiture_.getTexture() == nullptr) {
                 cerr << "Erreur : Voiture sans texture\n";
                 continue;
             }
             window.draw(car.spriteVoiture_);
+        }
+
+        for (const auto& pieton : pietonsVector) {
+            if (pieton.spritePieton_.getTexture() == nullptr) {
+                cerr << "Erreur : Pieton sans texture\n";
+                continue;
+            }
+            window.draw(pieton.spritePieton_);
         }
 
         window.display(); // Affiche la fenêtre
