@@ -5,10 +5,12 @@
 #include <iostream>
 #include <cmath>
 #include "OnFoot.hpp"
+#include <chrono>
 
 #define PI 3.14159265358979323846
 
 using namespace std;
+using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, .
 
 float switch_posX(const Spawn_area& spawn) {
 

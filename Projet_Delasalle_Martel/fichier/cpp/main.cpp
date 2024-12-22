@@ -262,7 +262,7 @@ int main() {
 
 	auto delayMove = chrono::seconds(0);
 	carsVector.at(0).Respawn(Spawn_area::RIGHT, Turning::TURN_LEFT);
-	pedestriansVector.at(0).Respawn(Spawn_area::RIGHT, Turning::TURN_LEFT); 
+	pedestriansVector.at(0).Respawn(Spawn_area::RIGHT, Turning::TURN_LEFT);
 
 
 
