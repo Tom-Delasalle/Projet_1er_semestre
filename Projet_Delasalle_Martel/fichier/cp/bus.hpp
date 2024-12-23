@@ -28,5 +28,5 @@ public:
 	float getY();
 	void move();
 	//void stop();
-	bool isNotClose(const float otherPosX, const float otherPosY);
+	bool isNotClose(const Moving moving, const float otherPosX, const float otherPosY);
 };

@@ -97,6 +97,7 @@ void print_traffic_light(Traffic_light& traffic_light_master, Traffic_light& tra
 // Thread function for moving the cars
 void moving_cars(vector<Voiture>& carsVector,
 	vector<Bus>& bussVector,
+	vector<OnFoot>& pedestriansVector,
 	Voiture& car,
 	Traffic_light& traffic_light_master,
 	Traffic_light& traffic_light_slave,
@@ -148,6 +149,13 @@ void moving_cars(vector<Voiture>& carsVector,
 			}
 		}
 
+		// Boucle pour appliquer la fonction isNotClose à chaque bus présent
+		for (int K = 0; K < pedestriansVector.size(); ++K) {
+			if (canMove) {
+				canMove = car.isNotClose(Moving::ON_FOOT, pedestriansVector.at(K).getX(), pedestriansVector.at(K).getY());
+			}
+		}
+
 		// La voiture peut se déplacer uniquement si elle est autorisée par le feu et qu'elle ne vas pas heurter un véhicule ou piéton
 		if (canMove) {
 			car.move();
@@ -188,6 +196,7 @@ void moving_cars(vector<Voiture>& carsVector,
 // Thread function for moving the bus
 void moving_buss(vector<Bus>& bussVector,
 	vector<Voiture>& carsVector,
+	vector<OnFoot>& pedestriansVector,
 	Bus& bus,
 	Traffic_light& traffic_light_master,
 	Spawn_area spawn,
@@ -217,13 +226,19 @@ void moving_buss(vector<Bus>& bussVector,
 		// Boucle pour appliquer la fonction isNotClose à chaque bus présent
 		for (int j = 0; j < bussVector.size(); ++j) {
 			if ((bussVector.at(j).getX() != bus.getX() || bussVector.at(j).getY() != bus.getY()) && canMove) {
-				canMove = bus.isNotClose(bussVector.at(j).getX(), bussVector.at(j).getY());
+				canMove = bus.isNotClose(Moving::BUS, bussVector.at(j).getX(), bussVector.at(j).getY());
 			}
 		}
 		// Boucle pour appliquer la fonction isNotClose à chaque voiture présente
 		for (int i = 0; i < carsVector.size(); ++i) {
 			if (canMove) {
-				canMove = bus.isNotClose(carsVector.at(i).getX(), carsVector.at(i).getY());
+				canMove = bus.isNotClose(Moving::CAR, carsVector.at(i).getX(), carsVector.at(i).getY());
+			}
+		}
+		// Boucle pour appliquer la fonction isNotClose à chaque voiture présente
+		for (int k = 0; k < pedestriansVector.size(); ++k) {
+			if (canMove) {
+				canMove = bus.isNotClose(Moving::ON_FOOT, pedestriansVector.at(k).getX(), pedestriansVector.at(k).getY());
 			}
 		}
 

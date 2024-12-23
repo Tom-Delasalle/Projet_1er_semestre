@@ -75,7 +75,15 @@ inline float switch_posX(const Moving moving, const Spawn_area spawn) {
 		}
 		break;
 	case(Moving::BIKE): X = 400.f; break;
-	case(Moving::ON_FOOT): X = 400.f; break;
+	case(Moving::ON_FOOT):
+		switch (spawn) { // Change la valeur de la position x du sprite en fonction de l'endroit où va apparaître le piéton
+		case Spawn_area::UP: X = 380.f; break;
+		case Spawn_area::DOWN: X = 495.f; break;
+		case Spawn_area::LEFT: X = 3.f; break;
+		case Spawn_area::RIGHT: X = 871.f; break;
+		default: X = 254.f; cerr << "Erreur : La creation dU piéton n'a pas pu se faire correctement\n";
+		}
+		break;
 	default: cerr << "Erreur : enum class moving fonction switch_posX\n";
 	}
 	return X;
@@ -103,7 +111,15 @@ inline float switch_posY(const Moving moving, const Spawn_area spawn) {
 		}
 		break;
 	case(Moving::BIKE): Y = 400.f; break;
-	case(Moving::ON_FOOT): Y = 400.f; break;
+	case(Moving::ON_FOOT):
+		switch (spawn) { // Change la valeur de la position y du sprite en fonction de l'endroit où va apparaître la voiture
+		case Spawn_area::UP: Y = 3.f; break;
+		case Spawn_area::DOWN: Y = 659.f; break;
+		case Spawn_area::LEFT: Y = 390.f; break;
+		case Spawn_area::RIGHT: Y = 280.f; break;
+		default: Y = 254.f; cerr << "Erreur : La creation du piéton n'a pas pu se faire correctement\n";
+		}
+		break;
 	default: cerr << "Erreur : enum class moving fonction switch_posY\n";
 	}
 	return Y;
@@ -131,7 +147,15 @@ inline float switch_angle(const Moving moving, const Spawn_area spawn) {
 		}
 		break;
 	case(Moving::BIKE): angle = 0.f; break;
-	case(Moving::ON_FOOT): angle = 0.f; break;
+	case(Moving::ON_FOOT):
+		switch (spawn) { // Change la valeur de l'angle du sprite en fonction de l'endroit où va apparaître le piéton
+		case Spawn_area::UP: angle = 180.f; break;
+		case Spawn_area::DOWN: angle = 0.f; break;
+		case Spawn_area::LEFT: angle = 90.f; break;
+		case Spawn_area::RIGHT: angle = -90.f; break;
+		default: angle = 0.f; cerr << "Erreur : La creation du pieton n'a pas pu se faire correctement\n";
+		}
+		break;
 	default: cerr << "Erreur : enum class moving fonction switch_angle\n";
 	}
 	return angle;

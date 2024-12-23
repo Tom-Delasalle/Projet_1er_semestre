@@ -72,14 +72,39 @@ void Bus::move() {
 	//circleTest.setPosition(centerCollisionX_, centerCollisionY_); // Définit la position du cercle dans la fenêtre
 }
 
-// Vérifie que l'origine d'un véhicule n'est pas à l'intérieur du cercle de collision
-bool Bus::isNotClose(const float otherPosX, const float otherPosY) {
 
-	if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_, 2.f)) {
-		cout << "Vehicule is in bus collision zone\n";
-		return false;
-	}
-	else {
+// Vérifie que l'origine d'un véhicule n'est pas à l'intérieur du cercle de collision
+bool Bus::isNotClose(const Moving moving, const float otherPosX, const float otherPosY) {
+
+	switch (moving) {
+	case(Moving::BUS):
+		if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_, 2.f)) {
+			cout << "Vehicule is in bus collision zone\n";
+			return false;
+		}
+		else {
+			return true;
+		}
+		break;
+	case(Moving::ON_FOOT):
+		if (angle_ != 0.f && angle_ != 90.f && angle_ != 180.f && angle_ != -90.f) {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_ + 15.f, 2.f)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_, 2.f)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		break;
+	default:
 		return true;
 	}
 
