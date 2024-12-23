@@ -433,18 +433,22 @@ int main() {
 	Voiture carSingle6(carSpeed, ref(imageVoiture), spawn6, turn6); // Créé une nouvelle voiture
 	carsVector.push_back(carSingle6); // Push dans le vecteur
 
+
+
+
+
 	auto delayMove = chrono::seconds(0);
-	jthread jthread_moving_car1(moving_cars, ref(carsVector), ref(bussVector), ref(carsVector.at(0)), ref(traffic_light_master), ref(traffic_light_slave),
+	jthread jthread_moving_car1(moving_cars, ref(carsVector), ref(bussVector), ref(pedestriansVector), ref(carsVector.at(0)), ref(traffic_light_master), ref(traffic_light_slave),
 		spawn1, turn1, delayMove, stopping.get_token()); delayMove += chrono::seconds(3 / 2);
-	jthread jthread_moving_car2(moving_cars, ref(carsVector), ref(bussVector), ref(carsVector.at(1)), ref(traffic_light_master), ref(traffic_light_slave),
+	jthread jthread_moving_car2(moving_cars, ref(carsVector), ref(bussVector), ref(pedestriansVector), ref(carsVector.at(1)), ref(traffic_light_master), ref(traffic_light_slave),
 		spawn2, turn2, delayMove, stopping.get_token()); delayMove += chrono::seconds(3 / 2);
-	jthread jthread_moving_car3(moving_cars, ref(carsVector), ref(bussVector), ref(carsVector.at(2)), ref(traffic_light_master), ref(traffic_light_slave),
+	jthread jthread_moving_car3(moving_cars, ref(carsVector), ref(bussVector), ref(pedestriansVector), ref(carsVector.at(2)), ref(traffic_light_master), ref(traffic_light_slave),
 		spawn3, turn3, delayMove, stopping.get_token()); delayMove += chrono::seconds(3 / 2);
-	jthread jthread_moving_car4(moving_cars, ref(carsVector), ref(bussVector), ref(carsVector.at(3)), ref(traffic_light_master), ref(traffic_light_slave),
+	jthread jthread_moving_car4(moving_cars, ref(carsVector), ref(bussVector), ref(pedestriansVector), ref(carsVector.at(3)), ref(traffic_light_master), ref(traffic_light_slave),
 		spawn4, turn4, delayMove, stopping.get_token()); delayMove += chrono::seconds(3 / 2);
-	jthread jthread_moving_car5(moving_cars, ref(carsVector), ref(bussVector), ref(carsVector.at(4)), ref(traffic_light_master), ref(traffic_light_slave),
+	jthread jthread_moving_car5(moving_cars, ref(carsVector), ref(bussVector), ref(pedestriansVector), ref(carsVector.at(4)), ref(traffic_light_master), ref(traffic_light_slave),
 		spawn5, turn5, delayMove, stopping.get_token()); delayMove += chrono::seconds(3 / 2);
-	jthread jthread_moving_car6(moving_cars, ref(carsVector), ref(bussVector), ref(carsVector.at(5)), ref(traffic_light_master), ref(traffic_light_slave),
+	jthread jthread_moving_car6(moving_cars, ref(carsVector), ref(bussVector), ref(pedestriansVector), ref(carsVector.at(5)), ref(traffic_light_master), ref(traffic_light_slave),
 		spawn6, turn6, delayMove, stopping.get_token());
 
 	for (i = 0; i < 4; ++i) {
@@ -472,13 +476,13 @@ int main() {
 	bussVector.push_back(busSingle4); // Push dans le vecteur
 
 	delayMove = chrono::seconds(0);
-	jthread jthread_moving_bus1(moving_buss, ref(bussVector), ref(carsVector), ref(bussVector.at(0)), ref(traffic_light_master),
+	jthread jthread_moving_bus1(moving_buss, ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bussVector.at(0)), ref(traffic_light_master),
 		spawn1, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
-	jthread jthread_moving_bus2(moving_buss, ref(bussVector), ref(carsVector), ref(bussVector.at(1)), ref(traffic_light_master),
+	jthread jthread_moving_bus2(moving_buss, ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bussVector.at(1)), ref(traffic_light_master),
 		spawn2, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
-	jthread jthread_moving_bus3(moving_buss, ref(bussVector), ref(carsVector), ref(bussVector.at(2)), ref(traffic_light_master),
+	jthread jthread_moving_bus3(moving_buss, ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bussVector.at(2)), ref(traffic_light_master),
 		spawn3, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
-	jthread jthread_moving_bus4(moving_buss, ref(bussVector), ref(carsVector), ref(bussVector.at(3)), ref(traffic_light_master),
+	jthread jthread_moving_bus4(moving_buss, ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bussVector.at(3)), ref(traffic_light_master),
 		spawn4, delayMove, stopping.get_token());
 
 
