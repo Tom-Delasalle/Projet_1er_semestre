@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.9)
 project("Carrefour3")
 
 # Ajoutez une source à l'exécutable de ce projet.
-add_executable (Carrefour3 "main.cpp" "voiture.cpp" "voiture.hpp" "tricolore.hpp" "OnFoot.cpp" "OnFoot.hpp" "common.hpp")
+add_executable (Carrefour3 "main.cpp" "voiture.cpp" "voiture.hpp" "tricolore.hpp" "OnFoot.cpp" "OnFoot.hpp" "bus.cpp" "bus.hpp")
 
 target_link_libraries(Carrefour3 sfml-graphics sfml-window)
 
