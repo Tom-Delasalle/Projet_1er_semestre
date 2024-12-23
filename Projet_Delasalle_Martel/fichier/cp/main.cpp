@@ -467,8 +467,7 @@ int main() {
 		spawn4, delayMove, stopping.get_token());
 
 
-	int k = 0;
-	for (k; k < 6; ++k) {
+	for (i=0 ; i < 6; ++i) {
 		cout << "New pedestrian spawned ";
 		switch (spawnAndTurnRand(gen)) {
 		case 1: spawn = Spawn_area::UP; cout << "at the TOP    "; break;
@@ -481,7 +480,7 @@ int main() {
 		case 2: turn = Turning::TURN_RIGHT; cout << "turning RIGHT\n"; break;
 		default: turn = Turning::NO_TURN; cout << "NOT turning\n";
 		}
-		switch (k) {
+		switch (i) {
 		case 0: spawn1 = spawn; turn1 = turn; break;
 		case 1: spawn2 = spawn; turn2 = turn; break;
 		case 2: spawn3 = spawn; turn3 = turn; break;

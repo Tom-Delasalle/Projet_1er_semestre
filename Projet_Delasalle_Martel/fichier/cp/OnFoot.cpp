@@ -74,78 +74,78 @@ void OnFoot::move() {
 
 }
 
-//void OnFoot::turn() {
-//
-//    if (turning_ != Turning::NO_TURN) {
-//
-//        switch (spawn_) {
-//        case Spawn_area::UP: // original angle : 180
-//            if (this->getX() <= 500 && this->getY() >= 365 && turning_ == Turning::TURN_LEFT) {
-//                angle_ -= 2.f;
-//                if (angle_ < 90.f) {
-//                    angle_ = 90.f;
-//                }
-//                spritePieton_.setRotation(angle_);
-//            }
-//            if (this->getX() >= 300 && this->getY() >= 250 && turning_ == Turning::TURN_RIGHT) {
-//                angle_ += 2.f;
-//                if (angle_ > 270.f) {
-//                    angle_ = 270.f;
-//                }
-//                spritePieton_.setRotation(angle_);
-//            }
-//            break;
-//        case Spawn_area::DOWN: // original angle : 0
-//            if (this->getX() >= 300 && this->getY() <= 300 && turning_ == Turning::TURN_LEFT) {
-//                angle_ -= 2.f;
-//                if (angle_ < -90.f) {
-//                    angle_ = -90.f;
-//                }
-//                spritePieton_.setRotation(angle_);
-//            }
-//            if (this->getX() <= 500 && this->getY() <= 420 && turning_ == Turning::TURN_RIGHT) {
-//                angle_ += 2.f;
-//                if (angle_ > 90.f) {
-//                    angle_ = 90.f;
-//                }
-//                spritePieton_.setRotation(angle_);
-//            }
-//            break;
-//        case Spawn_area::LEFT: // original angle : 90
-//            if (this->getX() >= 370 && this->getY() >= 300 && turning_ == Turning::TURN_LEFT) {
-//                angle_ -= 2.f;
-//                if (angle_ < 0.f) {
-//                    angle_ = 0.f;
-//                }
-//                spritePieton_.setRotation(angle_);
-//            }
-//            if (this->getX() >= 450 && this->getY() <= 500 && turning_ == Turning::TURN_RIGHT) {
-//                angle_ += 2.f;
-//                if (angle_ > 180.f) {
-//                    angle_ = 180.f;
-//                }
-//                spritePieton_.setRotation(angle_);
-//            }
-//            break;
-//        case Spawn_area::RIGHT: // original angle : -90
-//            if (this->getX() <= 463 && this->getY() <= 500 && turning_ == Turning::TURN_LEFT) {
-//                angle_ -= 2.f;
-//                if (angle_ < -180.f) {
-//                    angle_ = -180.f;
-//                }
-//                spritePieton_.setRotation(angle_);
-//            }
-//            if (this->getX() <= 470 && this->getY() >= 300 && turning_ == Turning::TURN_RIGHT) {
-//                angle_ += 2.f;
-//                if (angle_ > 0.f) {
-//                    angle_ = 0.f;
-//                }
-//                spritePieton_.setRotation(angle_);
-//            }
-//            break;
-//        }
-//    }
-//}
+void OnFoot::turn() {
+
+    //if (turning_ != Turning::NO_TURN) {
+
+    //    switch (spawn_) {
+    //    case Spawn_area::UP: // original angle : 180
+    //        if (this->getX() <= 500 && this->getY() >= 365 && turning_ == Turning::TURN_LEFT) {
+    //            angle_ -= 2.f;
+    //            if (angle_ < 90.f) {
+    //                angle_ = 90.f;
+    //            }
+    //            spritePieton_.setRotation(angle_);
+    //        }
+    //        if (this->getX() >= 300 && this->getY() >= 250 && turning_ == Turning::TURN_RIGHT) {
+    //            angle_ += 2.f;
+    //            if (angle_ > 270.f) {
+    //                angle_ = 270.f;
+    //            }
+    //            spritePieton_.setRotation(angle_);
+    //        }
+    //        break;
+    //    case Spawn_area::DOWN: // original angle : 0
+    //        if (this->getX() >= 300 && this->getY() <= 300 && turning_ == Turning::TURN_LEFT) {
+    //            angle_ -= 2.f;
+    //            if (angle_ < -90.f) {
+    //                angle_ = -90.f;
+    //            }
+    //            spritePieton_.setRotation(angle_);
+    //        }
+    //        if (this->getX() <= 500 && this->getY() <= 420 && turning_ == Turning::TURN_RIGHT) {
+    //            angle_ += 2.f;
+    //            if (angle_ > 90.f) {
+    //                angle_ = 90.f;
+    //            }
+    //            spritePieton_.setRotation(angle_);
+    //        }
+    //        break;
+    //    case Spawn_area::LEFT: // original angle : 90
+    //        if (this->getX() >= 370 && this->getY() >= 300 && turning_ == Turning::TURN_LEFT) {
+    //            angle_ -= 2.f;
+    //            if (angle_ < 0.f) {
+    //                angle_ = 0.f;
+    //            }
+    //            spritePieton_.setRotation(angle_);
+    //        }
+    //        if (this->getX() >= 450 && this->getY() <= 500 && turning_ == Turning::TURN_RIGHT) {
+    //            angle_ += 2.f;
+    //            if (angle_ > 180.f) {
+    //                angle_ = 180.f;
+    //            }
+    //            spritePieton_.setRotation(angle_);
+    //        }
+    //        break;
+    //    case Spawn_area::RIGHT: // original angle : -90
+    //        if (this->getX() <= 463 && this->getY() <= 500 && turning_ == Turning::TURN_LEFT) {
+    //            angle_ -= 2.f;
+    //            if (angle_ < -180.f) {
+    //                angle_ = -180.f;
+    //            }
+    //            spritePieton_.setRotation(angle_);
+    //        }
+    //        if (this->getX() <= 470 && this->getY() >= 300 && turning_ == Turning::TURN_RIGHT) {
+    //            angle_ += 2.f;
+    //            if (angle_ > 0.f) {
+    //                angle_ = 0.f;
+    //            }
+    //            spritePieton_.setRotation(angle_);
+    //        }
+    //        break;
+    //    }
+    //}
+}
 
 // Vérifie que l'origine d'un piéton n'est pas à l'intérieur du cercle de collision
 bool OnFoot::isNotClose(const float otherPosX, const float otherPosY) {
