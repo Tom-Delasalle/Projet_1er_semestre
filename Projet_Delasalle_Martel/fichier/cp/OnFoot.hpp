@@ -13,6 +13,10 @@ private:
 	float angle_;
 	Spawn_area spawn_;
 	Turning turning_;
+	float centerCollisionX_;
+	float centerCollisionY_;
+	float radiusCollision_;
+	float pedestrianAndCenterGap_;
 public:
 	sf::Texture imagePieton_;
 	sf::Sprite spritePieton_;
@@ -22,8 +26,8 @@ public:
 	void Respawn(const Spawn_area& spawn, const Turning& turning);
 	float getX();
 	float getY();
-	void set_speed(const float newSpeed);
 	void move();
 	//void stop();
 	void turn();
+	bool isNotClose(const float otherPosX, const float otherPosY);
 };
