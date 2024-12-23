@@ -20,7 +20,7 @@ mt19937 gen(rd());
 uniform_int_distribution<int> carDelay(1500, 2500);
 uniform_int_distribution<int> spawnAndTurnRand(1, 4);
 // Protéger l'accès à carsVector
-//mutex carMutex; 
+mutex carLock;
 
 using namespace std;
 using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, ...
@@ -87,7 +87,8 @@ void print_traffic_light(Traffic_light& traffic_light_master, Traffic_light& tra
 }
 
 // Thread function for moving the cars
-void moving_cars(Voiture& car,
+void moving_cars(vector<Voiture>& carsVector,
+	Voiture& car,
 	Traffic_light& traffic_light_master,
 	Traffic_light& traffic_light_slave,
 	Spawn_area spawn,
@@ -101,11 +102,7 @@ void moving_cars(Voiture& car,
 
 	while (!stopToken.stop_requested()) {
 
-		/* Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
-		if (trafficLightSlave.getColor() != TrafficColor::Green &&
-			currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
-			canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
-		}*/
+		// Switch pour check si la voiture se trouve dans la zone de détection du feu et si le feu est rouge ou orange. Si les conditions sont remplies, alors la voiture ne pourra pas plus avancer
 		switch (spawn) {
 		case Spawn_area::UP:
 			if (car.getY() <= stopYUp && car.getY() >= stopYUp - 6.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
@@ -129,15 +126,21 @@ void moving_cars(Voiture& car,
 			break;
 		}
 
+		// Boucle pour appliquer la fonction isNotClose à chaque voiture présente
+		for (int i = 0; i < carsVector.size(); ++i) {
+			if ((carsVector.at(i).getX() != car.getX() || carsVector.at(i).getY() != car.getY()) && canMove) {
+				canMove = car.isNotClose(carsVector.at(i).getX(), carsVector.at(i).getY());
+			}
+		}
+
 		// La voiture peut se déplacer uniquement si elle est autorisée par le feu et qu'elle ne vas pas heurter un véhicule ou piéton
 		if (canMove) {
 			car.move();
 			car.turn();
 		}
 
-
 		// Si la voiture quitte la fenêtre, on la fait réapparaître à un autre endroit
-		if (car.getX() <= -13.f || car.getX() >= 890.f || car.getY() <= -13.f || car.getY() >= 672.f) {
+		if (car.getX() <= -18.f || car.getX() >= 895.f || car.getY() <= -18.f || car.getY() >= 677.f) {
 			cout << "Respawned a car ";
 			switch (spawnAndTurnRand(gen)) {
 			case 1: spawn = Spawn_area::UP; cout << "at the TOP    "; break;
@@ -147,15 +150,18 @@ void moving_cars(Voiture& car,
 			}
 			switch (spawnAndTurnRand(gen)) {
 			case 1: turn = Turning::TURN_LEFT; cout << "turning LEFT\n"; break;
-			case 2: turn = Turning::TURN_LEFT; cout << "turning LEFT\n"; break;
-			default: turn = Turning::TURN_RIGHT; cout << "turning RIGHT\n"; break;
+			case 2: turn = Turning::TURN_RIGHT; cout << "turning RIGHT\n"; break;
+			default: turn = Turning::NO_TURN; cout << "NOT turning\n"; break;
 			}
+			carLock.lock(); // Mutex lock pour éviter que les véhicules réapparaissent les uns sur les autres
+			this_thread::sleep_for(chrono::milliseconds(750));
 			car.Respawn(spawn, turn);
+			carLock.unlock();
 		}
 
 		canMove = true;
 
-		this_thread::sleep_for(chrono::milliseconds(1));
+		this_thread::sleep_for(chrono::milliseconds(10));
 	}
 
 }
@@ -226,12 +232,18 @@ int main() {
 
 	auto delayMove = chrono::seconds(0);
 	carsVector.at(0).Respawn(Spawn_area::RIGHT, Turning::TURN_LEFT);
-	jthread jthread_moving_car1(moving_cars, ref(carsVector.at(0)), ref(traffic_light_master), ref(traffic_light_slave), spawn1, turn1, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
-	jthread jthread_moving_car2(moving_cars, ref(carsVector.at(1)), ref(traffic_light_master), ref(traffic_light_slave), spawn2, turn2, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
-	jthread jthread_moving_car3(moving_cars, ref(carsVector.at(2)), ref(traffic_light_master), ref(traffic_light_slave), spawn3, turn3, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
-	jthread jthread_moving_car4(moving_cars, ref(carsVector.at(3)), ref(traffic_light_master), ref(traffic_light_slave), spawn4, turn4, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
-	jthread jthread_moving_car5(moving_cars, ref(carsVector.at(4)), ref(traffic_light_master), ref(traffic_light_slave), spawn5, turn5, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
-	jthread jthread_moving_car6(moving_cars, ref(carsVector.at(5)), ref(traffic_light_master), ref(traffic_light_slave), spawn6, turn6, delayMove, stopping.get_token());
+	jthread jthread_moving_car1(moving_cars, ref(carsVector), ref(carsVector.at(0)), ref(traffic_light_master), ref(traffic_light_slave),
+		spawn1, turn1, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
+	jthread jthread_moving_car2(moving_cars, ref(carsVector), ref(carsVector.at(1)), ref(traffic_light_master), ref(traffic_light_slave),
+		spawn2, turn2, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
+	jthread jthread_moving_car3(moving_cars, ref(carsVector), ref(carsVector.at(2)), ref(traffic_light_master), ref(traffic_light_slave),
+		spawn3, turn3, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
+	jthread jthread_moving_car4(moving_cars, ref(carsVector), ref(carsVector.at(3)), ref(traffic_light_master), ref(traffic_light_slave),
+		spawn4, turn4, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
+	jthread jthread_moving_car5(moving_cars, ref(carsVector), ref(carsVector.at(4)), ref(traffic_light_master), ref(traffic_light_slave),
+		spawn5, turn5, delayMove, stopping.get_token()); delayMove += chrono::seconds(1);
+	jthread jthread_moving_car6(moving_cars, ref(carsVector), ref(carsVector.at(5)), ref(traffic_light_master), ref(traffic_light_slave),
+		spawn6, turn6, delayMove, stopping.get_token());
 
 	//sf::RenderWindow window(sf::VideoMode(800, 800), "My window"); Crée une fenêtre "My window" de dessin 2D SFML de 800 x 800 pixels 
 	sf::RenderWindow window(sf::VideoMode(877, 669), "Carrefour Vauban");
@@ -291,11 +303,8 @@ int main() {
 		// Affiche toutes les voitures
 		//lock_guard<mutex> lock(carMutex); // Protège l'accès à carsVector
 		for (const auto& car : carsVector) {
-			if (car.spriteVoiture_.getTexture() == nullptr) {
-				cerr << "Erreur : Voiture sans texture\n";
-				continue;
-			}
 			window.draw(car.spriteVoiture_);
+			//window.draw(car.circleTest);
 		}
 
 		window.display(); // Affiche la fenêtre
