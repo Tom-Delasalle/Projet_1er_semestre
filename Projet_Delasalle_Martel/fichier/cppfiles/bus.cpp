@@ -24,7 +24,7 @@ Bus::Bus(const float speed, const sf::Texture& imageBus, const Spawn_area spawn)
 
 	posX_ = switch_posX(moving_, spawn_);
 	posY_ = switch_posY(moving_, spawn_);
-	angle_ = switch_angle(moving_, spawn_);
+	angle_ = switch_angle(spawn_);
 	spriteBus_.setPosition(posX_, posY_);
 	spriteBus_.setRotation(angle_);
 
@@ -45,7 +45,7 @@ void Bus::Respawn(const Spawn_area spawn) {
 	spawn_ = spawn;
 	posX_ = switch_posX(moving_, spawn_);
 	posY_ = switch_posY(moving_, spawn_);
-	angle_ = switch_angle(moving_, spawn_);
+	angle_ = switch_angle(spawn_);
 	spriteBus_.setPosition(posX_, posY_);
 	spriteBus_.setRotation(angle_);
 	centerCollisionX_ = posX_ + static_cast<float>(cos((angle_ - 90) * PI / 180.0)) * speed_ * busAndCenterGap_;
@@ -76,7 +76,6 @@ void Bus::move() {
 bool Bus::isNotClose(const float otherPosX, const float otherPosY) {
 
 	if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_, 2.f)) {
-		cout << "Vehicule is in bus collision zone\n";
 		return false;
 	}
 	else {

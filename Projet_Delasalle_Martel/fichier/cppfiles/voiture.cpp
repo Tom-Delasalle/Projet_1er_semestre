@@ -38,12 +38,12 @@ Voiture::Voiture(const float speed, const sf::Texture& imageVoiture, const Spawn
 
 	posX_ = switch_posX(moving_, spawn_);
 	posY_ = switch_posY(moving_, spawn_);
-	angle_ = switch_angle(moving_, spawn_);
+	angle_ = switch_angle(spawn_);
 	spriteVoiture_.setPosition(posX_, posY_);
 	spriteVoiture_.setRotation(angle_);
 
-	radiusCollision_ = 15.f;
-	carAndCenterGap_ = 25.f;
+	radiusCollision_ = 13.f;
+	carAndCenterGap_ = 30.f;
 	centerCollisionX_ = posX_ + static_cast<float>(cos((angle_ - 90) * PI / 180.0)) * speed_ * carAndCenterGap_;
 	centerCollisionY_ = posY_ + static_cast<float>(sin((angle_ - 90) * PI / 180.0)) * speed_ * carAndCenterGap_;
 
@@ -61,7 +61,7 @@ void Voiture::Respawn(const Spawn_area carSpawn, const Turning carTurning) {
 
 	posX_ = switch_posX(moving_, spawn_);
 	posY_ = switch_posY(moving_, spawn_);
-	angle_ = switch_angle(moving_, spawn_);
+	angle_ = switch_angle(spawn_);
 	spriteVoiture_.setPosition(posX_, posY_);
 	spriteVoiture_.setRotation(angle_);
 	centerCollisionX_ = posX_ + static_cast<float>(cos((angle_ - 90) * PI / 180.0)) * speed_ * carAndCenterGap_;
@@ -172,7 +172,7 @@ bool Voiture::isNotClose(const Moving moving, const float otherPosX, const float
 		break;
 	case(Moving::BUS):
 		if (angle_ != 0.f && angle_ != 90.f && angle_ != 180.f && angle_ != -90.f) {
-			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_ + 15.f, 2.f)) {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_ + 20.f, 2.f)) {
 				return false;
 			}
 			else {
@@ -188,6 +188,23 @@ bool Voiture::isNotClose(const Moving moving, const float otherPosX, const float
 			}
 		}
 		break;
+	case(Moving::BIKE):
+		if (angle_ != 0.f && angle_ != 90.f && angle_ != 180.f && angle_ != -90.f) {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_ + 10.f, 2.f)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_, 2.f)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
 	default:
 		return true;
 	}

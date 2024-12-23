@@ -74,7 +74,13 @@ inline float switch_posX(const Moving moving, const Spawn_area spawn) {
 		default: X = 254.f; cerr << "Erreur : La creation du bus n'a pas pu se faire correctement\n";
 		}
 		break;
-	case(Moving::BIKE): X = 400.f; break;
+	case(Moving::BIKE):
+		switch (spawn) {
+		case Spawn_area::UP: X = 406.f; break;
+		case Spawn_area::DOWN: X = 468.f; break;
+		default: X = 254.f;  cerr << "Erreur : La creation du cycliste n'a pas pu se faire correctement\n";
+		}
+		break;
 	case(Moving::ON_FOOT): X = 400.f; break;
 	default: cerr << "Erreur : enum class moving fonction switch_posX\n";
 	}
@@ -102,7 +108,13 @@ inline float switch_posY(const Moving moving, const Spawn_area spawn) {
 		default: Y = 254.f; cerr << "Erreur : La creation du bus n'a pas pu se faire correctement\n";
 		}
 		break;
-	case(Moving::BIKE): Y = 400.f; break;
+	case(Moving::BIKE):
+		switch (spawn) {
+		case Spawn_area::UP: Y = -17.f; break;
+		case Spawn_area::DOWN: Y = 676.f; break;
+		default: Y = 254.f;  cerr << "Erreur : La creation du cycliste n'a pas pu se faire correctement\n";
+		}
+		break;
 	case(Moving::ON_FOOT): Y = 400.f; break;
 	default: cerr << "Erreur : enum class moving fonction switch_posY\n";
 	}
@@ -110,29 +122,15 @@ inline float switch_posY(const Moving moving, const Spawn_area spawn) {
 
 }
 
-inline float switch_angle(const Moving moving, const Spawn_area spawn) {
+inline float switch_angle(const Spawn_area spawn) {
 
 	float angle = 0.f;
-	switch (moving) {
-	case(Moving::CAR):
-		switch (spawn) { // Change la valeur de l'angle du sprite en fonction de l'endroit où va apparaître la voiture
-		case Spawn_area::UP: angle = 180.f; break;
-		case Spawn_area::DOWN: angle = 0.f; break;
-		case Spawn_area::LEFT: angle = 90.f; break;
-		case Spawn_area::RIGHT: angle = -90.f; break;
-		default: angle = 0.f; cerr << "Erreur : La creation de la voiture n'a pas pu se faire correctement\n";
-		}
-		break;
-	case(Moving::BUS): 
-		switch (spawn) {
-		case Spawn_area::LEFT: angle = 90.f; break;
-		case Spawn_area::RIGHT: angle = -90.f; break;
-		default: angle = 254.f; cerr << "Erreur : La creation du bus n'a pas pu se faire correctement\n";
-		}
-		break;
-	case(Moving::BIKE): angle = 0.f; break;
-	case(Moving::ON_FOOT): angle = 0.f; break;
-	default: cerr << "Erreur : enum class moving fonction switch_angle\n";
+	switch (spawn) { // Change la valeur de l'angle du sprite en fonction de l'endroit où va apparaître le véhicule
+	case Spawn_area::UP: angle = 180.f; break;
+	case Spawn_area::DOWN: angle = 0.f; break;
+	case Spawn_area::LEFT: angle = 90.f; break;
+	case Spawn_area::RIGHT: angle = -90.f; break;
+	default: angle = 0.f; cerr << "Erreur : La creation du véhicule n'a pas pu se faire correctement\n";
 	}
 	return angle;
 

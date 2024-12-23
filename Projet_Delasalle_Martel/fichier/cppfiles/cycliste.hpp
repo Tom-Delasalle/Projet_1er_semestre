@@ -19,7 +19,7 @@ private:
 public:
 	sf::Texture imageCycliste_;
 	sf::Sprite spriteCycliste_;
-	sf::CircleShape circleTest;
+	//sf::CircleShape circleTest;
 	// Constructor
 	Cycliste(const float speed, const sf::Texture& imageCycliste, const Spawn_area spawn);
 	// Functions
