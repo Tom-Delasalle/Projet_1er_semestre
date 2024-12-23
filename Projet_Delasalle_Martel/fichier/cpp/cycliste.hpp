@@ -1,11 +1,10 @@
-
 #pragma once
+
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include "voiture.hpp"
 
-
-class OnFoot {
+class Cycliste {
 private:
 	Moving moving_;
 	float posX_;
@@ -13,22 +12,21 @@ private:
 	float speed_;
 	float angle_;
 	Spawn_area spawn_;
-	Turning turning_;
 	float centerCollisionX_;
 	float centerCollisionY_;
 	float radiusCollision_;
-	float pedestrianAndCenterGap_;
+	float bikeAndCenterGap_;
 public:
-	sf::Texture imagePieton_;
-	sf::Sprite spritePieton_;
+	sf::Texture imageCycliste_;
+	sf::Sprite spriteCycliste_;
+	//sf::CircleShape circleTest;
 	// Constructor
-	OnFoot(const float speed, const sf::Texture& imagePieton, const Spawn_area spawn, const Turning turning);
+	Cycliste(const float speed, const sf::Texture& imageCycliste, const Spawn_area spawn);
 	// Functions
-	void Respawn(const Spawn_area& spawn, const Turning& turning);
+	void Respawn(const Spawn_area spawn);
 	float getX();
 	float getY();
 	void move();
 	//void stop();
-	void turn();
 	bool isNotClose(const float otherPosX, const float otherPosY);
 };

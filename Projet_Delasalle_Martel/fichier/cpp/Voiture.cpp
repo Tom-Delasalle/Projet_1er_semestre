@@ -9,49 +9,6 @@
 #define PI 3.14159265358979323846
 
 using namespace std;
-using namespace chrono_literals; // Permet de faire des opération de temps avec s, min, h, ...
-
-float switch_posX(const Spawn_area spawn) {
-
-	float X = 0.f;
-	switch (spawn) { // Change la valeur de la position x du sprite en fonction de l'endroit où va apparaître la voiture
-	case Spawn_area::UP: X = 426.f; break;
-	case Spawn_area::DOWN: X = 448.f; break;
-	case Spawn_area::LEFT: X = -12.f; break;
-	case Spawn_area::RIGHT: X = 889.f; break;
-	default: X = 254.f; cerr << "Erreur : La creation de la voiture n'a pas pu se faire correctement\n";
-	}
-	return X;
-
-}
-
-float switch_posY(const Spawn_area spawn) {
-
-	float Y = 0.f;
-	switch (spawn) { // Change la valeur de la position y du sprite en fonction de l'endroit où va apparaître la voiture
-	case Spawn_area::UP: Y = -12.f; break;
-	case Spawn_area::DOWN: Y = 681.f; break;
-	case Spawn_area::LEFT: Y = 345.f; break;
-	case Spawn_area::RIGHT: Y = 323.f; break;
-	default: Y = 254.f; cerr << "Erreur : La creation de la voiture n'a pas pu se faire correctement\n";
-	}
-	return Y;
-
-}
-
-float switch_angle(const Spawn_area spawn) {
-
-	float angle = 0.f;
-	switch (spawn) { // Change la valeur de l'angle du sprite en fonction de l'endroit où va apparaître la voiture
-	case Spawn_area::UP: angle = 180.f; break;
-	case Spawn_area::DOWN: angle = 0.f; break;
-	case Spawn_area::LEFT: angle = 90.f; break;
-	case Spawn_area::RIGHT: angle = -90.f; break;
-	default: angle = 0.f; cerr << "Erreur : La creation de la voiture n'a pas pu se faire correctement\n";
-	}
-	return angle;
-
-}
 
 //float* switch_init_pos(const Spawn_area spawn) {
 //
@@ -70,6 +27,8 @@ float switch_angle(const Spawn_area spawn) {
 Voiture::Voiture(const float speed, const sf::Texture& imageVoiture, const Spawn_area spawn, const Turning turning)
 	: spawn_(spawn), turning_(turning), speed_(speed), imageVoiture_(ref(imageVoiture)) {
 
+	moving_ = Moving::CAR;
+
 	spriteVoiture_.setTexture(imageVoiture);
 	if (spriteVoiture_.getTexture() == nullptr) {
 		cerr << "Erreur : Voiture sans texture\n";
@@ -77,28 +36,37 @@ Voiture::Voiture(const float speed, const sf::Texture& imageVoiture, const Spawn
 	spriteVoiture_.setOrigin(92.f, 160.f);
 	spriteVoiture_.setScale(0.1f, 0.1f);
 
-	posX_ = switch_posX(spawn);
-	posY_ = switch_posY(spawn);
-	angle_ = switch_angle(spawn);
+	posX_ = switch_posX(moving_, spawn_);
+	posY_ = switch_posY(moving_, spawn_);
+	angle_ = switch_angle(spawn_);
 	spriteVoiture_.setPosition(posX_, posY_);
 	spriteVoiture_.setRotation(angle_);
 
-	/*float circleRadius = 20.f;
-	circleCollision_.setRadius(circleRadius);
-	circleCollision_.setOrigin(circleRadius / 2.f, circleRadius / 2.f);
-	posX = const * cos(angle_); posY = const * sin(angle_) */
+	radiusCollision_ = 13.f;
+	carAndCenterGap_ = 30.f;
+	centerCollisionX_ = posX_ + static_cast<float>(cos((angle_ - 90) * PI / 180.0)) * speed_ * carAndCenterGap_;
+	centerCollisionY_ = posY_ + static_cast<float>(sin((angle_ - 90) * PI / 180.0)) * speed_ * carAndCenterGap_;
+
+	//circleTest.setRadius(radiusCollision_);
+	//circleTest.setFillColor(sf::Color::Blue); // L'aire du cercle est bleu
+	//circleTest.setOrigin(circleTest.getRadius(), circleTest.getRadius()); // Définit l'origine du cercle
+	//circleTest.setPosition(centerCollisionX_, centerCollisionY_); // Définit la position du cercle dans la fenêtre
+
 }
 
-void Voiture::Respawn(const Spawn_area spawn, const Turning turning) {
+void Voiture::Respawn(const Spawn_area carSpawn, const Turning carTurning) {
 
-	turning_ = turning;
-	spawn_ = spawn;
+	turning_ = carTurning;
+	spawn_ = carSpawn;
 
-	posX_ = switch_posX(spawn);
-	posY_ = switch_posY(spawn);
-	angle_ = switch_angle(spawn);
+	posX_ = switch_posX(moving_, spawn_);
+	posY_ = switch_posY(moving_, spawn_);
+	angle_ = switch_angle(spawn_);
 	spriteVoiture_.setPosition(posX_, posY_);
 	spriteVoiture_.setRotation(angle_);
+	centerCollisionX_ = posX_ + static_cast<float>(cos((angle_ - 90) * PI / 180.0)) * speed_ * carAndCenterGap_;
+	centerCollisionY_ = posY_ + static_cast<float>(sin((angle_ - 90) * PI / 180.0)) * speed_ * carAndCenterGap_;
+	//circleTest.setPosition(centerCollisionX_, centerCollisionY_); // Définit la position du cercle dans la 
 
 }
 
@@ -116,7 +84,9 @@ void Voiture::move() {
 	posX_ += static_cast<float>(cos((angle_ - 90) * PI / 180.0) * speed_);
 	posY_ += static_cast<float>(sin((angle_ - 90) * PI / 180.0) * speed_);
 	spriteVoiture_.setPosition(posX_, posY_);
-
+	centerCollisionX_ = posX_ + static_cast<float>(cos((angle_ - 90) * PI / 180.0)) * speed_ * carAndCenterGap_;
+	centerCollisionY_ = posY_ + static_cast<float>(sin((angle_ - 90) * PI / 180.0)) * speed_ * carAndCenterGap_;
+	//circleTest.setPosition(centerCollisionX_, centerCollisionY_); // Définit la position du cercle dans la fenêtre
 }
 
 void Voiture::turn() {
@@ -184,6 +154,78 @@ void Voiture::turn() {
 			spriteVoiture_.setRotation(angle_);
 			break;
 		}
+	}
+
+}
+
+// Vérifie que l'origine d'un véhicule n'est pas à l'intérieur du cercle de collision
+bool Voiture::isNotClose(const Moving moving, const float otherPosX, const float otherPosY) {
+
+	switch (moving) {
+	case(Moving::CAR):
+		if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_, 2.f)) {
+			return false;
+		}
+		else {
+			return true;
+		}
+		break;
+	case(Moving::BUS):
+		if (angle_ != 0.f && angle_ != 90.f && angle_ != 180.f && angle_ != -90.f) {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_ + 20.f, 2.f)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_, 2.f)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		break;
+	case(Moving::BIKE):
+		if (angle_ != 0.f && angle_ != 90.f && angle_ != 180.f && angle_ != -90.f) {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_ + 10.f, 2.f)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_, 2.f)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		break;
+	case(Moving::ON_FOOT):
+		if (angle_ != 0.f && angle_ != 90.f && angle_ != 180.f && angle_ != -90.f) {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_ + 15.f, 2.f)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		else {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_, 2.f)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		break;
+	default:
+		return true;
 	}
 
 }

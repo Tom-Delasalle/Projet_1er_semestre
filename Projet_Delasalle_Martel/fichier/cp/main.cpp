@@ -21,7 +21,6 @@ const float busSpeed = 1.f;     // Vitesse des bus
 // Générateur random
 random_device rd;
 mt19937 gen(rd());
-uniform_int_distribution<int> carDelay(1500, 2500);
 uniform_int_distribution<int> spawnAndTurnRand(1, 4);
 // Protéger l'accès à carsVector
 //mutex carMutex; 
@@ -149,7 +148,7 @@ void moving_cars(vector<Voiture>& carsVector,
 			}
 		}
 
-		// Boucle pour appliquer la fonction isNotClose à chaque bus présent
+		// Boucle pour appliquer la fonction isNotClose à chaque piéton présent
 		for (int K = 0; K < pedestriansVector.size(); ++K) {
 			if (canMove) {
 				canMove = car.isNotClose(Moving::ON_FOOT, pedestriansVector.at(K).getX(), pedestriansVector.at(K).getY());
@@ -235,7 +234,7 @@ void moving_buss(vector<Bus>& bussVector,
 				canMove = bus.isNotClose(Moving::CAR, carsVector.at(i).getX(), carsVector.at(i).getY());
 			}
 		}
-		// Boucle pour appliquer la fonction isNotClose à chaque voiture présente
+		// Boucle pour appliquer la fonction isNotClose à chaque piéton présente
 		for (int k = 0; k < pedestriansVector.size(); ++k) {
 			if (canMove) {
 				canMove = bus.isNotClose(Moving::ON_FOOT, pedestriansVector.at(k).getX(), pedestriansVector.at(k).getY());
