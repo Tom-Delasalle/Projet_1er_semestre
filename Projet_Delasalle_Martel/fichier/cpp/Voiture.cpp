@@ -208,7 +208,7 @@ bool Voiture::isNotClose(const Moving moving, const float otherPosX, const float
 		break;
 	case(Moving::ON_FOOT):
 		if (angle_ != 0.f && angle_ != 90.f && angle_ != 180.f && angle_ != -90.f) {
-			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_ + 15.f, 2.f)) {
+			if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_ + 12.f, 2.f)) {
 				return false;
 			}
 			else {

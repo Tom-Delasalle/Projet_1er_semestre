@@ -78,7 +78,6 @@ bool Bus::isNotClose(const Moving moving, const float otherPosX, const float oth
 	switch (moving) {
 	case(Moving::BUS):
 		if (pow((otherPosX - centerCollisionX_), 2.f) + pow((otherPosY - centerCollisionY_), 2.f) <= pow(radiusCollision_, 2.f)) {
-			cout << "Vehicule is in bus collision zone\n";
 			return false;
 		}
 		else {

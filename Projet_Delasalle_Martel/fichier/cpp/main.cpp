@@ -14,12 +14,15 @@
 const float stopXLeft = 344.f;  // Zone d'arrêt pour les voitures venant de la gauche
 const float stopXRight = 530.f; // Zone d'arrêt pour les voitures venant de la droite
 const float stopYUp = 242.f;    // Zone d'arrêt pour les voitures venant du haut
-const float stopYDown = 430.f;  // Zone d'arrêt pour les voitures venant du haut
+const float stopYDown = 430.f;  // Zone d'arrêt pour les voitures venant du bas
+const float stopXLeft2 = 676.f;
+const float stopXRight2 = 748.f; 
+const float stopYUp2 = 90.f;    
+const float stopYDown2 = 167.f;  
 const float carSpeed = 1.f;     // Vitesse des voitures
 const float busSpeed = 1.f;     // Vitesse des bus
 const float bikeSpeed = 0.8f;    // Vitesse des cyclistes
-const float pedestrianSpeed = 1.f; //Vitesse des piétons
-
+const float pedestrianSpeed = 0.6f; //Vitesse des piétons
 
 // Générateur random
 random_device rd;
@@ -120,9 +123,21 @@ void moving_cars(vector<Voiture>& carsVector,
 			if (car.getY() <= stopYUp && car.getY() >= stopYUp - 6.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
 				canMove = false;
 			}
+			if (car.getY() <= stopYUp2 && car.getY() >= stopYUp2 - 6.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			if (turn == Turning::TURN_LEFT && car.getX() <= stopXLeft2 && car.getX() >= stopXLeft2 - 6.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
 			break;
 		case Spawn_area::DOWN:
 			if (car.getY() >= stopYDown && car.getY() <= stopYDown + 6.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			if (turn == Turning::NO_TURN && car.getY() <= stopYDown2 && car.getY() >= stopYDown2 - 6.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			if (turn == Turning::TURN_RIGHT && car.getX() <= stopXLeft2 && car.getX() >= stopXLeft2 - 6.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
 				canMove = false;
 			}
 			break;
@@ -130,9 +145,21 @@ void moving_cars(vector<Voiture>& carsVector,
 			if (car.getX() <= stopXLeft && car.getX() >= stopXLeft - 6.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
 				canMove = false;
 			}
+			if (turn == Turning::NO_TURN && car.getX() <= stopXLeft2 && car.getX() >= stopXLeft2 - 6.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			if (turn == Turning::TURN_LEFT && car.getY() <= stopYDown2 && car.getY() >= stopYDown2 - 6.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
 			break;
 		case Spawn_area::RIGHT:
 			if (car.getX() >= stopXRight && car.getX() <= stopXRight + 6.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			if (car.getX() >= stopXRight2 && car.getX() <= stopXRight2 + 6.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			if (turn == Turning::TURN_RIGHT && car.getY() <= stopYDown2 && car.getY() >= stopYDown2 - 6.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
 				canMove = false;
 			}
 			break;
@@ -156,7 +183,6 @@ void moving_cars(vector<Voiture>& carsVector,
 				canMove = car.isNotClose(Moving::BIKE, bikesVector.at(k).getX(), bikesVector.at(k).getY());
 			}
 		}
-
 		// Boucle pour appliquer la fonction isNotClose à chaque piéton présent
 		for (int l = 0; l < pedestriansVector.size(); ++l) {
 			if (canMove) {
@@ -171,7 +197,7 @@ void moving_cars(vector<Voiture>& carsVector,
 		}
 
 		// Si la voiture quitte la fenêtre, on la fait réapparaître à un autre endroit
-		if (car.getX() <= -18.f || car.getX() >= 895.f || car.getY() <= -18.f || car.getY() >= 677.f) {
+		if (car.getX() <= -28.f || car.getX() >= 905.f || car.getY() <= -28.f || car.getY() >= 687.f) {
 			cout << "Respawned a car ";
 			switch (spawnAndTurnRand(gen)) {
 			case 1: spawn = Spawn_area::UP; cout << "at the TOP    "; break;
@@ -184,9 +210,9 @@ void moving_cars(vector<Voiture>& carsVector,
 			case 2: turn = Turning::TURN_RIGHT; cout << "turning RIGHT\n"; break;
 			default: turn = Turning::NO_TURN; cout << "NOT turning\n"; break;
 			}
+			car.Respawn(spawn, turn);
 			busLock.lock(); // Mutex lock pour éviter que les véhicules réapparaissent les uns sur les autres
 			this_thread::sleep_for(chrono::milliseconds(750));
-			car.Respawn(spawn, turn);
 			busLock.unlock();
 		}
 
@@ -204,6 +230,7 @@ void moving_buss(vector<Bus>& bussVector,
 	vector<OnFoot>& pedestriansVector,
 	Bus& bus,
 	Traffic_light& traffic_light_master,
+	Traffic_light& traffic_light_slave,
 	Spawn_area spawn,
 	chrono::seconds delayMove,
 	stop_token stopToken) {
@@ -220,9 +247,15 @@ void moving_buss(vector<Bus>& bussVector,
 			if (bus.getX() <= stopXLeft - 4.f && bus.getX() >= stopXLeft - 10.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
 				canMove = false;
 			}
+			if (bus.getX() <= stopXLeft2 - 4.f && bus.getX() >= stopXLeft2 - 10.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
 			break;
 		case Spawn_area::RIGHT:
 			if (bus.getX() >= stopXRight + 4.f && bus.getX() <= stopXRight + 10.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			if (bus.getX() >= stopXRight2 + 4.f && bus.getX() <= stopXRight2 + 10.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
 				canMove = false;
 			}
 			break;
@@ -260,16 +293,16 @@ void moving_buss(vector<Bus>& bussVector,
 		}
 
 		// Si le bus quitte la fenêtre, on le fait réapparaître à un autre endroit
-		if (bus.getX() <= -18.f || bus.getX() >= 895.f || bus.getY() <= -18.f || bus.getY() >= 677.f) {
+		if (bus.getX() <= -28.f || bus.getX() >= 905.f || bus.getY() <= -28.f || bus.getY() >= 687.f) {
 			cout << "Respawned a bus ";
 			switch (spawnAndTurnRand(gen)) {
 			case 1: spawn = Spawn_area::LEFT; cout << "to the LEFT\n"; break;
 			case 2: spawn = Spawn_area::LEFT; cout << "to the LEFT\n"; break;
 			default: spawn = Spawn_area::RIGHT; cout << "to the RIGHT\n"; break;
 			}
-			busLock.lock(); // Mutex lock pour éviter que les véhicules réapparaissent les uns sur les autres
-			this_thread::sleep_for(chrono::milliseconds(750));
 			bus.Respawn(spawn);
+			busLock.lock(); // Mutex lock pour éviter que les véhicules réapparaissent les uns sur les autres
+			this_thread::sleep_for(chrono::milliseconds(2000));
 			busLock.unlock();
 		}
 
@@ -286,6 +319,7 @@ void moving_bikes(vector<Cycliste>& bikesVector,
 	vector<Voiture>& carsVector,
 	vector<OnFoot>& pedestriansVector,
 	Cycliste& bike,
+	Traffic_light& traffic_light_master,
 	Traffic_light& traffic_light_slave,
 	Spawn_area spawn,
 	chrono::seconds delayMove,
@@ -303,9 +337,15 @@ void moving_bikes(vector<Cycliste>& bikesVector,
 			if (bike.getY() <= stopYUp - 4.f && bike.getY() >= stopYUp - 10.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
 				canMove = false;
 			}
+			if (bike.getY() <= stopYUp2 - 4.f && bike.getY() >= stopYUp2 - 10.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
 			break;
 		case Spawn_area::DOWN:
-			if (bike.getY() >= stopYDown + 4.f && bike.getY() <= stopYDown + 10.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
+			if (bike.getY() <= stopYDown + 10.f && bike.getY() >= stopYDown + 4.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
+				canMove = false;
+			}
+			if (bike.getY() <= stopYDown2 + 10.f && bike.getY() >= stopYDown2 + 4.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
 				canMove = false;
 			}
 		}
@@ -342,16 +382,16 @@ void moving_bikes(vector<Cycliste>& bikesVector,
 		}
 
 		// Si le cycliste quitte la fenêtre, on le fait réapparaître à un autre endroit
-		if (bike.getX() <= -18.f || bike.getX() >= 895.f || bike.getY() <= -18.f || bike.getY() >= 677.f) {
+		if (bike.getX() <= -28.f || bike.getX() >= 905.f || bike.getY() <= -28.f || bike.getY() >= 687.f) {
 			cout << "Respawned a bike ";
 			switch (spawnAndTurnRand(gen)) {
 			case 1: spawn = Spawn_area::UP; cout << "at the TOP\n"; break;
 			case 2: spawn = Spawn_area::UP; cout << "at the TOP\n"; break;
 			default: spawn = Spawn_area::DOWN; cout << "at the BOTTOM\n";
 			}
-			bikeLock.lock(); // Mutex lock pour éviter que les véhicules réapparaissent les uns sur les autres
-			this_thread::sleep_for(chrono::milliseconds(750));
 			bike.Respawn(spawn);
+			bikeLock.lock(); // Mutex lock pour éviter que les véhicules réapparaissent les uns sur les autres
+			this_thread::sleep_for(chrono::milliseconds(1500));
 			bikeLock.unlock();
 		}
 
@@ -371,7 +411,6 @@ void moving_pedestrians(vector<OnFoot>& pedestriansVector,
 	Traffic_light& traffic_light_master,
 	Traffic_light& traffic_light_slave,
 	Spawn_area spawn,
-	Turning turn,
 	chrono::seconds delayMove,
 	stop_token stopToken) {
 
@@ -381,11 +420,6 @@ void moving_pedestrians(vector<OnFoot>& pedestriansVector,
 
 	while (!stopToken.stop_requested()) {
 
-		/* Vérifie si le feu est vert avant de permettre aux voitures de se déplacer
-		if (trafficLightSlave.getColor() != TrafficColor::Green &&
-			currentX <= stopXRight + 10 && currentX > stopXRight - 10) {
-			canMove = false; // Si le feu n'est pas vert et que la voiture est dans la zone d'arrêt, elle doit s'arrêter
-		}*/
 		switch (spawn) {
 		case Spawn_area::UP:
 			if (pedestrian.getY() <= stopYUp && pedestrian.getY() >= stopYUp - 6.f && (traffic_light_slave.get_traffic_color() == Traffic_color::red || traffic_light_slave.get_traffic_color() == Traffic_color::orange)) {
@@ -406,64 +440,57 @@ void moving_pedestrians(vector<OnFoot>& pedestriansVector,
 			if (pedestrian.getX() >= stopXRight && pedestrian.getX() <= stopXRight + 6.f && (traffic_light_master.get_traffic_color() == Traffic_color::red || traffic_light_master.get_traffic_color() == Traffic_color::orange)) {
 				canMove = false;
 			}
-			break;
 		}
 
-
-
-
-		// Boucle pour appliquer la fonction isNotClose à chaque bus présent
+		// Boucle pour appliquer la fonction isNotClose à chaque piéton présent
 		for (int k = 0; k < pedestriansVector.size(); ++k) {
 			if ((pedestriansVector.at(k).getX() != pedestrian.getX() || pedestriansVector.at(k).getY() != pedestrian.getY()) && canMove) {
-				canMove = pedestrian.isNotClose(pedestriansVector.at(k).getX(), pedestriansVector.at(k).getY());
+				canMove = pedestrian.isNotClose(Moving::ON_FOOT, pedestriansVector.at(k).getX(), pedestriansVector.at(k).getY());
 			}
 		}
-
 		// Boucle pour appliquer la fonction isNotClose à chaque bus présent
 		for (int j = 0; j < bussVector.size(); ++j) {
 			if (canMove) {
-				canMove = pedestrian.isNotClose(bussVector.at(j).getX(), bussVector.at(j).getY());
+				canMove = pedestrian.isNotClose(Moving::BUS, bussVector.at(j).getX(), bussVector.at(j).getY());
 			}
 		}
-		//// Boucle pour appliquer la fonction isNotClose à chaque voiture présente
+		// Boucle pour appliquer la fonction isNotClose à chaque voiture présente
 		for (int i = 0; i < carsVector.size(); ++i) {
 			if (canMove) {
-				canMove = pedestrian.isNotClose(carsVector.at(i).getX(), carsVector.at(i).getY());
+				canMove = pedestrian.isNotClose(Moving::CAR, carsVector.at(i).getX(), carsVector.at(i).getY());
 			}
 		}
-
 		//Boucle pour appliquer la fonction isNotClose à chaque cycliste présent
 		for (int l = 0; l < bikesVector.size(); ++l) {
 			if (canMove) {
-				canMove = pedestrian.isNotClose(bikesVector.at(l).getX(), bikesVector.at(l).getY());
+				canMove = pedestrian.isNotClose(Moving::BIKE, bikesVector.at(l).getX(), bikesVector.at(l).getY());
 			}
 		}
 
 		// La voiture peut se déplacer uniquement si elle est autorisée par le feu et qu'elle ne vas pas heurter un véhicule ou piéton
 		if (canMove) {
 			pedestrian.move();
-			pedestrian.turn();
 		}
 
 
 		// Si la voiture quitte la fenêtre, on la fait réapparaître à un autre endroit
-		if (pedestrian.getX() <= -13.f || pedestrian.getX() >= 890.f || pedestrian.getY() <= -13.f || pedestrian.getY() >= 672.f) {
+		if (pedestrian.getX() <= -28.f || pedestrian.getX() >= 905.f || pedestrian.getY() <= -28.f || pedestrian.getY() >= 687.f) {
 			cout << "Respawned a pedestrian ";
 			switch (spawnAndTurnRand(gen)) {
-			case 1: spawn = Spawn_area::UP; cout << "at the TOP    "; break;
-			case 2: spawn = Spawn_area::DOWN;  cout << "at the BOTTOM "; break;
-			case 3: spawn = Spawn_area::LEFT; cout << "to the LEFT   "; break;
-			default: spawn = Spawn_area::RIGHT; cout << "to the RIGHT  "; break;
+			case 1: spawn = Spawn_area::UP; cout << "at the TOP\n"; break;
+			case 2: spawn = Spawn_area::DOWN;  cout << "at the BOTTOM\n"; break;
+			case 3: spawn = Spawn_area::LEFT; cout << "to the LEFT\n"; break;
+			default: spawn = Spawn_area::RIGHT; cout << "to the RIGHT\n"; break;
 			}
-			pedestrianLock.lock(); // Mutex lock pour éviter que les véhicules réapparaissent les uns sur les autres
-			this_thread::sleep_for(chrono::milliseconds(750));
-			pedestrian.Respawn(spawn, turn);
+			pedestrian.Respawn(spawn);
+			pedestrianLock.lock(); // Mutex lock pour éviter que les piétons réapparaissent les uns sur les autres
+			this_thread::sleep_for(chrono::milliseconds(2000));
 			pedestrianLock.unlock();
 		}
 
 		canMove = true;
 
-		this_thread::sleep_for(chrono::milliseconds(1));
+		this_thread::sleep_for(chrono::milliseconds(10));
 	}
 
 }
@@ -583,7 +610,7 @@ int main() {
 	jthread jthread_moving_car9(moving_cars, ref(carsVector), ref(bussVector), ref(bikesVector), ref(pedestriansVector), ref(carsVector.at(8)), ref(traffic_light_master), ref(traffic_light_slave),
 		spawn9, turn9, delayMove, stopping.get_token());
 
-	for (i = 0; i < 4; ++i) {
+	for (i = 0; i < 3; ++i) {
 		cout << "New bus spawned ";
 		switch (spawnAndTurnRand(gen)) {
 		case 1: spawn = Spawn_area::LEFT; cout << "to the LEFT\n"; break;
@@ -593,8 +620,7 @@ int main() {
 		switch (i) {
 		case 0: spawn1 = spawn; break;
 		case 1: spawn2 = spawn; break;
-		case 2: spawn3 = spawn; break;
-		case 3: spawn4 = spawn;
+		case 2: spawn3 = spawn;
 		}
 	}
 
@@ -604,18 +630,14 @@ int main() {
 	bussVector.push_back(busSingle2); // Push dans le vecteur
 	Bus busSingle3(busSpeed, ref(imageBus), spawn3); // Créé ue nouveau bus
 	bussVector.push_back(busSingle3); // Push dans le vecteur
-	Bus busSingle4(busSpeed, ref(imageBus), spawn4); // Créé ue nouveau bus
-	bussVector.push_back(busSingle4); // Push dans le vecteur
 
 	delayMove = chrono::seconds(0);
 	jthread jthread_moving_bus1(moving_buss, ref(bussVector), ref(carsVector), ref(bikesVector), ref(pedestriansVector), ref(bussVector.at(0)), ref(traffic_light_master),
-		spawn1, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
+		ref(traffic_light_slave), spawn1, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
 	jthread jthread_moving_bus2(moving_buss, ref(bussVector), ref(carsVector), ref(bikesVector), ref(pedestriansVector), ref(bussVector.at(1)), ref(traffic_light_master),
-		spawn2, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
+		ref(traffic_light_slave), spawn2, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
 	jthread jthread_moving_bus3(moving_buss, ref(bussVector), ref(carsVector), ref(bikesVector), ref(pedestriansVector), ref(bussVector.at(2)), ref(traffic_light_master),
-		spawn3, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
-	jthread jthread_moving_bus4(moving_buss, ref(bussVector), ref(carsVector), ref(bikesVector), ref(pedestriansVector), ref(bussVector.at(3)), ref(traffic_light_master),
-		spawn4, delayMove, stopping.get_token());
+		ref(traffic_light_slave), spawn3, delayMove, stopping.get_token());
 
 	for (i = 0; i < 5; ++i) {
 		cout << "New bike spawned ";
@@ -645,68 +667,67 @@ int main() {
 	bikesVector.push_back(bikeSingle4); // Push dans le vecteur
 
 	delayMove = chrono::seconds(0);
-	jthread jthread_moving_bike1(moving_bikes, ref(bikesVector), ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bikesVector.at(0)), ref(traffic_light_slave),
-		spawn1, delayMove, stopping.get_token()); delayMove += chrono::seconds(3);
-	jthread jthread_moving_bike2(moving_bikes, ref(bikesVector), ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bikesVector.at(1)), ref(traffic_light_slave),
-		spawn2, delayMove, stopping.get_token()); delayMove += chrono::seconds(3);
-	jthread jthread_moving_bike3(moving_bikes, ref(bikesVector), ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bikesVector.at(2)), ref(traffic_light_slave),
-		spawn3, delayMove, stopping.get_token()); delayMove += chrono::seconds(3);
-	jthread jthread_moving_bike4(moving_bikes, ref(bikesVector), ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bikesVector.at(3)), ref(traffic_light_slave),
-		spawn4, delayMove, stopping.get_token()); delayMove += chrono::seconds(3);
-	jthread jthread_moving_bike5(moving_bikes, ref(bikesVector), ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bikesVector.at(4)), ref(traffic_light_slave),
-		spawn4, delayMove, stopping.get_token());
+	jthread jthread_moving_bike1(moving_bikes, ref(bikesVector), ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bikesVector.at(0)), ref(traffic_light_master),
+		ref(traffic_light_slave), spawn1, delayMove, stopping.get_token()); delayMove += chrono::seconds(3);
+	jthread jthread_moving_bike2(moving_bikes, ref(bikesVector), ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bikesVector.at(1)), ref(traffic_light_master),
+		ref(traffic_light_slave), spawn2, delayMove, stopping.get_token()); delayMove += chrono::seconds(3);
+	jthread jthread_moving_bike3(moving_bikes, ref(bikesVector), ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bikesVector.at(2)), ref(traffic_light_master),
+		ref(traffic_light_slave), spawn3, delayMove, stopping.get_token()); delayMove += chrono::seconds(3);
+	jthread jthread_moving_bike4(moving_bikes, ref(bikesVector), ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bikesVector.at(3)), ref(traffic_light_master),
+		ref(traffic_light_slave), spawn4, delayMove, stopping.get_token()); delayMove += chrono::seconds(3);
+	jthread jthread_moving_bike5(moving_bikes, ref(bikesVector), ref(bussVector), ref(carsVector), ref(pedestriansVector), ref(bikesVector.at(4)), ref(traffic_light_master),
+		ref(traffic_light_slave), spawn4, delayMove, stopping.get_token());
 
 
-	for (i = 0; i < 6; ++i) {
+	for (i = 0; i < 7; ++i) {
 		cout << "New pedestrian spawned ";
 		switch (spawnAndTurnRand(gen)) {
-		case 1: spawn = Spawn_area::UP; cout << "at the TOP    "; break;
-		case 2: spawn = Spawn_area::DOWN;  cout << "at the BOTTOM "; break;
-		case 3: spawn = Spawn_area::LEFT; cout << "to the LEFT   "; break;
-		default: spawn = Spawn_area::RIGHT; cout << "to the RIGHT  ";
-		}
-		switch (spawnAndTurnRand(gen)) {
-		case 1: turn = Turning::TURN_LEFT; cout << "turning LEFT\n"; break;
-		case 2: turn = Turning::TURN_RIGHT; cout << "turning RIGHT\n"; break;
-		default: turn = Turning::NO_TURN; cout << "NOT turning\n";
+		case 1: spawn = Spawn_area::UP; cout << "at the TOP\n"; break;
+		case 2: spawn = Spawn_area::DOWN;  cout << "at the BOTTOM\n"; break;
+		case 3: spawn = Spawn_area::LEFT; cout << "to the LEFT\n"; break;
+		default: spawn = Spawn_area::RIGHT; cout << "to the RIGHT\n";
 		}
 		switch (i) {
-		case 0: spawn1 = spawn; turn1 = turn; break;
-		case 1: spawn2 = spawn; turn2 = turn; break;
-		case 2: spawn3 = spawn; turn3 = turn; break;
-		case 3: spawn4 = spawn; turn4 = turn; break;
-		case 4: spawn5 = spawn; turn5 = turn; break;
-		case 5: spawn6 = spawn; turn6 = turn;
+		case 0: spawn1 = spawn; break;
+		case 1: spawn2 = spawn; break;
+		case 2: spawn3 = spawn; break;
+		case 3: spawn4 = spawn; break;
+		case 4: spawn5 = spawn; break;
+		case 5: spawn6 = spawn; break;
+		case 6: spawn7 = spawn;
 		}
 	}
 
-	OnFoot pedestrianSingle1(pedestrianSpeed, ref(imagePieton), spawn1, turn1); // Créé une nouvelle voiture
+	OnFoot pedestrianSingle1(pedestrianSpeed, ref(imagePieton), spawn1); // Créé une nouvelle voiture
 	pedestriansVector.push_back(pedestrianSingle1); // Push dans le vecteur
-	OnFoot pedestrianSingle2(pedestrianSpeed, ref(imagePieton), spawn2, turn2); // Créé une nouvelle voiture
+	OnFoot pedestrianSingle2(pedestrianSpeed, ref(imagePieton), spawn2); // Créé une nouvelle voiture
 	pedestriansVector.push_back(pedestrianSingle2); // Push dans le vecteur
-	OnFoot pedestrianSingle3(pedestrianSpeed, ref(imagePieton), spawn3, turn3); // Créé une nouvelle voiture
+	OnFoot pedestrianSingle3(pedestrianSpeed, ref(imagePieton), spawn3); // Créé une nouvelle voiture
 	pedestriansVector.push_back(pedestrianSingle3); // Push dans le vecteur
-	OnFoot pedestrianSingle4(pedestrianSpeed, ref(imagePieton), spawn4, turn4); // Créé une nouvelle voiture
+	OnFoot pedestrianSingle4(pedestrianSpeed, ref(imagePieton), spawn4); // Créé une nouvelle voiture
 	pedestriansVector.push_back(pedestrianSingle4); // Push dans le vecteur
-	OnFoot pedestrianSingle5(pedestrianSpeed, ref(imagePieton), spawn5, turn5); // Créé une nouvelle voiture
+	OnFoot pedestrianSingle5(pedestrianSpeed, ref(imagePieton), spawn5); // Créé une nouvelle voiture
 	pedestriansVector.push_back(pedestrianSingle5); // Push dans le vecteur
-	OnFoot pedestrianSingle6(pedestrianSpeed, ref(imagePieton), spawn6, turn6); // Créé une nouvelle voiture
+	OnFoot pedestrianSingle6(pedestrianSpeed, ref(imagePieton), spawn6); // Créé une nouvelle voiture
 	pedestriansVector.push_back(pedestrianSingle6); // Push dans le vecteur
-
+	OnFoot pedestrianSingle7(pedestrianSpeed, ref(imagePieton), spawn7); // Créé une nouvelle voiture
+	pedestriansVector.push_back(pedestrianSingle7); // Push dans le vecteur
 
 	delayMove = chrono::seconds(0);
 	jthread jthread_moving_pedestrian1(moving_pedestrians, ref(pedestriansVector), ref(carsVector), ref(bussVector), ref(bikesVector), ref(pedestriansVector.at(0)), ref(traffic_light_master), ref(traffic_light_slave),
-		spawn1, turn1, delayMove, stopping.get_token()); delayMove += chrono::seconds(3 / 2);
+		spawn1, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
 	jthread jthread_moving_pedestrian2(moving_pedestrians, ref(pedestriansVector), ref(carsVector), ref(bussVector), ref(bikesVector), ref(pedestriansVector.at(1)), ref(traffic_light_master), ref(traffic_light_slave),
-		spawn2, turn2, delayMove, stopping.get_token()); delayMove += chrono::seconds(3 / 2);
+		spawn2, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
 	jthread jthread_moving_pedestrian3(moving_pedestrians, ref(pedestriansVector), ref(carsVector), ref(bussVector), ref(bikesVector), ref(pedestriansVector.at(2)), ref(traffic_light_master), ref(traffic_light_slave),
-		spawn3, turn3, delayMove, stopping.get_token()); delayMove += chrono::seconds(3 / 2);
+		spawn3, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
 	jthread jthread_moving_pedestrian4(moving_pedestrians, ref(pedestriansVector), ref(carsVector), ref(bussVector), ref(bikesVector), ref(pedestriansVector.at(3)), ref(traffic_light_master), ref(traffic_light_slave),
-		spawn4, turn4, delayMove, stopping.get_token()); delayMove += chrono::seconds(3 / 2);
+		spawn4, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
 	jthread jthread_moving_pedestrian5(moving_pedestrians, ref(pedestriansVector), ref(carsVector), ref(bussVector), ref(bikesVector), ref(pedestriansVector.at(4)), ref(traffic_light_master), ref(traffic_light_slave),
-		spawn5, turn5, delayMove, stopping.get_token()); delayMove += chrono::seconds(3 / 2);
+		spawn5, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
 	jthread jthread_moving_pedestrian6(moving_pedestrians, ref(pedestriansVector), ref(carsVector), ref(bussVector), ref(bikesVector), ref(pedestriansVector.at(5)), ref(traffic_light_master), ref(traffic_light_slave),
-		spawn6, turn6, delayMove, stopping.get_token());
+		spawn6, delayMove, stopping.get_token()); delayMove += chrono::seconds(5 / 2);
+	jthread jthread_moving_pedestrian7(moving_pedestrians, ref(pedestriansVector), ref(carsVector), ref(bussVector), ref(bikesVector), ref(pedestriansVector.at(6)), ref(traffic_light_master), ref(traffic_light_slave),
+		spawn6, delayMove, stopping.get_token());
 
 	//sf::RenderWindow window(sf::VideoMode(800, 800), "My window"); Crée une fenêtre "My window" de dessin 2D SFML de 800 x 800 pixels 
 	sf::RenderWindow window(sf::VideoMode(877, 669), "Carrefour Vauban");
@@ -738,6 +759,24 @@ int main() {
 	circle4.setOrigin(circle4.getRadius() / 2, circle4.getRadius() / 2);
 	circle4.setPosition(l2 - 130 + radius / 2, l2 - 65 + radius / 2);
 
+
+	sf::CircleShape circle5(radius);
+	circle5.setFillColor(sf::Color::Blue);
+	circle5.setOrigin(circle5.getRadius() / 2, circle5.getRadius() / 2);
+	circle5.setPosition(682.f, 410.f);
+	sf::CircleShape circle6(radius);
+	circle6.setFillColor(sf::Color::Green);
+	circle6.setOrigin(circle6.getRadius() / 2, circle6.getRadius() / 2);
+	circle6.setPosition(732.f, 253.f);
+	sf::CircleShape circle7(radius);
+	circle7.setFillColor(sf::Color::Blue);
+	circle7.setOrigin(circle7.getRadius() / 2, circle7.getRadius() / 2);
+	circle7.setPosition(510.f, 146.f);
+	sf::CircleShape circle8(radius);
+	circle8.setFillColor(sf::Color::Green);
+	circle8.setOrigin(circle8.getRadius() / 2, circle8.getRadius() / 2);
+	circle8.setPosition(352.f, 96.f);
+
 	while (window.isOpen()) // Tant que la fenêtre est ouverte
 	{
 		sf::Event event; // Crée un event qui permet de stocker des évènements en attente
@@ -758,10 +797,21 @@ int main() {
 		circle2.setFillColor(get_SFML_color(traffic_light_master));
 		circle3.setFillColor(get_SFML_color(traffic_light_slave));
 		circle4.setFillColor(get_SFML_color(traffic_light_master));
+
+		circle5.setFillColor(get_SFML_color(traffic_light_master));
+		circle6.setFillColor(get_SFML_color(traffic_light_slave));
+		circle7.setFillColor(get_SFML_color(traffic_light_slave));
+		circle8.setFillColor(get_SFML_color(traffic_light_master));
+
 		window.draw(circle1); // Dessine le cercle1
 		window.draw(circle2);
 		window.draw(circle3);
 		window.draw(circle4);
+
+		window.draw(circle5);
+		window.draw(circle6);
+		window.draw(circle7);
+		window.draw(circle8);
 
 		for (const auto& car : carsVector) {
 			window.draw(car.spriteVoiture_);
@@ -777,7 +827,7 @@ int main() {
 		}
 		for (const auto& pedestrian : pedestriansVector) {
 			window.draw(pedestrian.spritePieton_);
-			//window.draw(bus.circleTest);
+			//window.draw(pedestrian.circleTest);
 		}
 
 		window.display(); // Affiche la fenêtre

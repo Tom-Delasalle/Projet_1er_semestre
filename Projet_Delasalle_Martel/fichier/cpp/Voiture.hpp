@@ -62,15 +62,15 @@ inline float switch_posX(const Moving moving, const Spawn_area spawn) {
 		switch (spawn) { // Change la valeur de la position x du sprite en fonction de l'endroit où va apparaître la voiture
 		case Spawn_area::UP: X = 426.f; break;
 		case Spawn_area::DOWN: X = 448.f; break;
-		case Spawn_area::LEFT: X = -17.f; break;
-		case Spawn_area::RIGHT: X = 894.f; break;
+		case Spawn_area::LEFT: X = -27.f; break;
+		case Spawn_area::RIGHT: X = 904.f; break;
 		default: X = 254.f; cerr << "Erreur : La creation de la voiture n'a pas pu se faire correctement\n";
 		}
 		break;
 	case(Moving::BUS):
 		switch (spawn) {
-		case Spawn_area::LEFT: X = -17.f; break;
-		case Spawn_area::RIGHT: X = 894.f; break;
+		case Spawn_area::LEFT: X = -27.f; break;
+		case Spawn_area::RIGHT: X = 904.f; break;
 		default: X = 254.f; cerr << "Erreur : La creation du bus n'a pas pu se faire correctement\n";
 		}
 		break;
@@ -85,8 +85,8 @@ inline float switch_posX(const Moving moving, const Spawn_area spawn) {
 		switch (spawn) { // Change la valeur de la position x du sprite en fonction de l'endroit où va apparaître le piéton
 		case Spawn_area::UP: X = 380.f; break;
 		case Spawn_area::DOWN: X = 495.f; break;
-		case Spawn_area::LEFT: X = 3.f; break;
-		case Spawn_area::RIGHT: X = 871.f; break;
+		case Spawn_area::LEFT: X = -27.f; break;
+		case Spawn_area::RIGHT: X = 904.f; break;
 		default: X = 254.f; cerr << "Erreur : La creation dU piéton n'a pas pu se faire correctement\n";
 		}
 		break;
@@ -102,8 +102,8 @@ inline float switch_posY(const Moving moving, const Spawn_area spawn) {
 	switch (moving) {
 	case(Moving::CAR):
 		switch (spawn) { // Change la valeur de la position y du sprite en fonction de l'endroit où va apparaître la voiture
-		case Spawn_area::UP: Y = -17.f; break;
-		case Spawn_area::DOWN: Y = 676.f; break;
+		case Spawn_area::UP: Y = -27.f; break;
+		case Spawn_area::DOWN: Y = 686.f; break;
 		case Spawn_area::LEFT: Y = 345.f; break;
 		case Spawn_area::RIGHT: Y = 323.f; break;
 		default: Y = 254.f; cerr << "Erreur : La creation de la voiture n'a pas pu se faire correctement\n";
@@ -118,15 +118,15 @@ inline float switch_posY(const Moving moving, const Spawn_area spawn) {
 		break;
 	case(Moving::BIKE):
 		switch (spawn) {
-		case Spawn_area::UP: Y = -17.f; break;
-		case Spawn_area::DOWN: Y = 676.f; break;
+		case Spawn_area::UP: Y = -27.f; break;
+		case Spawn_area::DOWN: Y = 686.f; break;
 		default: Y = 254.f;  cerr << "Erreur : La creation du cycliste n'a pas pu se faire correctement\n";
 		}
 		break;
 	case(Moving::ON_FOOT):
 		switch (spawn) { // Change la valeur de la position y du sprite en fonction de l'endroit où va apparaître la voiture
-		case Spawn_area::UP: Y = 3.f; break;
-		case Spawn_area::DOWN: Y = 659.f; break;
+		case Spawn_area::UP: Y = -27.f; break;
+		case Spawn_area::DOWN: Y = 686.f; break;
 		case Spawn_area::LEFT: Y = 390.f; break;
 		case Spawn_area::RIGHT: Y = 280.f; break;
 		default: Y = 254.f; cerr << "Erreur : La creation du piéton n'a pas pu se faire correctement\n";

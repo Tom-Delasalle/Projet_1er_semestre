@@ -13,7 +13,6 @@ private:
 	float speed_;
 	float angle_;
 	Spawn_area spawn_;
-	Turning turning_;
 	float centerCollisionX_;
 	float centerCollisionY_;
 	float radiusCollision_;
@@ -21,14 +20,14 @@ private:
 public:
 	sf::Texture imagePieton_;
 	sf::Sprite spritePieton_;
+	//sf::CircleShape circleTest;
 	// Constructor
-	OnFoot(const float speed, const sf::Texture& imagePieton, const Spawn_area spawn, const Turning turning);
+	OnFoot(const float speed, const sf::Texture& imagePieton, const Spawn_area spawn);
 	// Functions
-	void Respawn(const Spawn_area& spawn, const Turning& turning);
+	void Respawn(const Spawn_area& spawn);
 	float getX();
 	float getY();
 	void move();
 	//void stop();
-	void turn();
-	bool isNotClose(const float otherPosX, const float otherPosY);
+	bool isNotClose(const Moving moving, const float otherPosX, const float otherPosY);
 };

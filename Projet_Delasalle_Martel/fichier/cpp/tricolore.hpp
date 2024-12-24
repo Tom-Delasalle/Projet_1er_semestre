@@ -5,8 +5,8 @@
 
 using namespace std;
 
-const auto time_transit = 3s;
-const auto time_waiting = 8s;
+const auto time_transit = 2s;
+const auto time_waiting = 6s;
 
 enum class Traffic_color // Enumération de couleurs stocké dans la class Traffic_color. Cette déclaration permet d'utiliser directement le nom des couleurs 
 {
